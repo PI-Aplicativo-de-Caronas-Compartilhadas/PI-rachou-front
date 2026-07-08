@@ -1,1 +1,14 @@
 @import "tailwindcss";
+@theme {
+  --color-ultrasonic-blue-50: #eaeafb;
+  --color-ultrasonic-blue-100: #d4d4f7;
+  --color-ultrasonic-blue-200: #aaaaee;
+  --color-ultrasonic-blue-300: #7f7fe6;
+  --color-ultrasonic-blue-400: #5555dd;
+  --color-ultrasonic-blue-500: #2a2ad5;
+  --color-ultrasonic-blue-600: #2222aa;
+  --color-ultrasonic-blue-700: #191980;
+  --color-ultrasonic-blue-800: #111155;
+  --color-ultrasonic-blue-900: #08082b;
+  --color-ultrasonic-blue-950: #06061e;
+}

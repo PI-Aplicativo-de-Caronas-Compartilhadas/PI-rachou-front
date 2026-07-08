@@ -1,18 +1,19 @@
 import Navbar from './components/navbar/Navbar';
 import Footer from './components/footer/Footer';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Sobre from './pages/sobre/Sobre';
 
 function App() {
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
+    <BrowserRouter>
       <Navbar />
-
-      {/* Ajustado de flex-grow para grow */}
-      <main className="grow">
-        <div className="p-8 text-center">Conteúdo Principal do Rachou</div>
-      </main>
-
+      <div className="min-h-[calc(100vh-10rem)] bg-slate-950">
+        <Routes>
+          <Route path="/sobre" element={<Sobre />} />
+        </Routes>
+      </div>
       <Footer />
-    </div>
+    </BrowserRouter>
   );
 }
 

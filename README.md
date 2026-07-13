@@ -14,6 +14,7 @@ Integrantes:
 *   Igor Kenzo Yamamoto
 *   Lilian Lacerda
 *   Roberta Rodrigues
+*   Vinicius Vicente
 
 ---
 

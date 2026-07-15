@@ -8,28 +8,28 @@ import CadastrarViagem from './pages/viagem/CadastrarViagem';
 import Login from './pages/login/Login'; 
 import CadastroUsuario from './pages/cadastrousuario/CadastroUsuario'; // Importando a nova tela de cadastro
 import { AuthProvider } from './contexts/AuthContext';
+import { Modalidades } from './pages/modalidades/Modalidades';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <>
       <AuthProvider>
-        <BrowserRouter>
-          <Navbar />
-          <div className="min-h-[calc(100vh-10rem)] bg-slate-950">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/sobre" element={<Sobre />} />
-              <Route path="/viagens" element={<ListaViagens />} />
-              <Route path="/cadastrarviagem" element={<CadastrarViagem />} />
-              
-              <Route path="/login" element={<Login />} /> 
-              {/* Rota dedicada para o Cadastro do Usuário */}
-              <Route path="/cadastro/usuario" element={<CadastroUsuario />} /> 
-            </Routes>
-          </div>
-          <Footer />
-        </BrowserRouter>
+      <ToastContainer limit={1}/>        
+      <BrowserRouter>
+        <Navbar />
+        <div className="min-h-[calc(100vh-10rem)] bg-slate-950">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/sobre" element={<Sobre />} />
+            <Route path="/viagens" element={<ListaViagens />} />
+            <Route path="/cadastrarviagem" element={<CadastrarViagem />} />
+            <Route path="/modalidades" element={<Modalidades />} />
+          </Routes>
+        </div>
+        <Footer />
+      </BrowserRouter>
       </AuthProvider>
     </>
   );

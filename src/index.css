@@ -31,3 +31,8 @@ html {
   font-family: "Poppins", sans-serif;
   scroll-behavior: smooth;
 }
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}

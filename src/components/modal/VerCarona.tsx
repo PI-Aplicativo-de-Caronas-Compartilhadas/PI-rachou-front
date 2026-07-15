@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { cidades } from "../../data/cidades";
 // SearchModal.tsx
 interface SearchModalProps {
   isOpen: boolean;
@@ -5,48 +7,142 @@ interface SearchModalProps {
 }
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const [origem, setOrigem] = useState("");
+  const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
+
+  const [destino, setDestino] = useState("");
+  const [mostrarSugestoesDestino, setMostrarSugestoesDestino] = useState(false);
+
+  const [passageiros, setPassageiros] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setOrigem(e.target.value);
+    setMostrarSugestoes(true);
+  };
+
+  const handleChangeDestino = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDestino(e.target.value);
+    setMostrarSugestoesDestino(true);
+  };
+
+  const cidadesFiltradas = cidades.filter((cidade) =>
+    cidade.toLowerCase().includes(origem.toLowerCase()),
+  );
+
+  const cidadesFiltradasDestino = cidades.filter((cidade) =>
+    cidade.toLowerCase().includes(destino.toLowerCase()),
+  );
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-        <div className="p-6 border-b flex justify-between items-center">
-          <h2 className="text-xl font-bold text-ultrasonic-blue-900">
+    <div className="fixed inset-0 bg-ultrasonic-blue-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-ultrasonic-blue-50 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
+        <div className="p-6 flex justify-between items-center">
+          <h2 className="text-xl font-bold text-ultrasonic-blue-600">
             Buscar Carona
           </h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-black">
-            Fechar
+          <button
+            onClick={onClose}
+            className="text-ultrasonic-blue-300 text-4xl font-bold hover:text-ultrasonic-blue-600"
+          >
+            &times;
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="p-8 space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-1 gap-5">
             <input
               type="text"
-              placeholder="De (Cidade, estação, local)"
-              className="p-4 border rounded-xl w-full"
+              value={origem}
+              onChange={handleChange}
+              placeholder="Origem"
+              className="p-4 border border-ultrasonic-blue-600 rounded-xl w-full"
             />
+
+            {mostrarSugestoes && origem && (
+              <div className="border border-gray-200 rounded-xl bg-white shadow-md max-h-48 overflow-y-auto">
+                {cidadesFiltradas.map((cidade) => (
+                  <div
+                    key={cidade}
+                    className="p-3 hover:bg-gray-100 cursor-pointer"
+                    onClick={() => {
+                      setOrigem(cidade);
+                      setMostrarSugestoes(false);
+                    }}
+                  >
+                    {cidade}
+                  </div>
+                ))}
+              </div>
+            )}
+
             <input
               type="text"
-              placeholder="Para (Cidade, estação, local)"
-              className="p-4 border rounded-xl w-full"
+              placeholder="Destino"
+              value={destino}
+              onChange={handleChangeDestino}
+              className="p-4 border  border-ultrasonic-blue-600 rounded-xl w-full"
             />
           </div>
+          {mostrarSugestoesDestino && destino && (
+            <div className="border border-gray-200 rounded-xl bg-white shadow-md max-h-48 overflow-y-auto">
+              {cidadesFiltradasDestino.map((cidade) => (
+                <div
+                  key={cidade}
+                  className="p-3 hover:bg-gray-100 cursor-pointer"
+                  onClick={() => {
+                    setDestino(cidade);
+                    setMostrarSugestoesDestino(false);
+                  }}
+                >
+                  {cidade}
+                </div>
+              ))}
+            </div>
+          )}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input type="date" className="p-4 border rounded-xl" />
             <input
               type="text"
-              placeholder="Volta (Opcional)"
-              className="p-4 border rounded-xl"
+              placeholder="Ida"
+              onFocus={(e) => (e.currentTarget.type = "date")}
+              onBlur={(e) => {
+                if (!e.currentTarget.value) {
+                  e.currentTarget.type = "text";
+                }
+              }}
+              className="w-full p-4 border  border-ultrasonic-blue-600  rounded-xl"
             />
-            <select className="p-4 border rounded-xl">
-              <option>1 adulto</option>
-              <option>2 adultos</option>
-              <option>3 adultos</option>
-              <option>4 adultos</option>
+            <input
+              type="text"
+              placeholder="Volta"
+              onFocus={(e) => (e.currentTarget.type = "date")}
+              onBlur={(e) => {
+                if (!e.currentTarget.value) {
+                  e.currentTarget.type = "text";
+                }
+              }}
+              className="w-full p-4 border  border-ultrasonic-blue-600  rounded-xl"
+            />
+            <select
+              value={passageiros}
+              onChange={(e) => setPassageiros(e.target.value)}
+              className={`p-4 border border-ultrasonic-blue-600 rounded-xl ${
+                passageiros ? "text-gray-900" : "text-gray-400"
+              }`}
+            >
+              <option value="" disabled>
+                Passageiros
+              </option>
+
+              <option value="1">1 adulto</option>
+              <option value="2">2 adultos</option>
+              <option value="3">3 adultos</option>
+              <option value="4">4 adultos</option>
             </select>
           </div>
-          <button className="w-full bg-ultrasonic-blue-500 text-white py-4 rounded-xl font-bold hover:bg-ultrasonic-blue-600 transition">
+          <button className="mt-2 w-full bg-ultrasonic-blue-500 text-white py-4 rounded-xl font-bold hover:bg-ultrasonic-blue-600 transition">
             Procurar
           </button>
         </div>

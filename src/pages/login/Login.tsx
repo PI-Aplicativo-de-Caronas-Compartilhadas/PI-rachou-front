@@ -1,18 +1,19 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useState } from 'react';
+import type { ChangeEvent, FormEvent } from 'react';
+import { Link } from 'react-router-dom';
+import { login } from '../../services/Service'; // Ajuste o caminho até o Service.ts
 
 export default function Login() {
-  // Estado para alternar entre a tela de Login e a tela de Cadastro
-  const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [userResponse, setUserResponse] = useState<any>(null);
 
-  // Estados para os inputs do formulário
   const [formData, setFormData] = useState({
-    nome: '',
-    usuario: '', 
+    email: '', 
     senha: '',
-    foto: '',
   });
 
-  // Função para capturar as mudanças nos inputs de forma dinâmica
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     setFormData({
       ...formData,
@@ -20,63 +21,62 @@ export default function Login() {
     });
   }
 
-  // Função para lidar com o envio do formulário
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (isRegister) {
-      console.log('Dados para Cadastro:', formData);
-    } else {
-      console.log('Dados para Login:', {
-        usuario: formData.usuario,
+    setErrorMessage('');
+    setSuccessMessage('');
+    setLoading(true);
+
+    try {
+      await login('/usuarios/logar', {
+        usuario: formData.email, // Atende ao backend (/usuarios/logar espera "usuario")
         senha: formData.senha,
-      });
+      }, setUserResponse);
+
+      setSuccessMessage('Login efetuado com sucesso! Redirecionando...');
+      // Aqui posteriormente você direciona para a home pós-login ou atualiza o AuthContext
+
+    } catch (error: any) {
+      console.error('Erro no login:', error);
+      const apiError = error.response?.data?.message || 'E-mail ou senha inválidos.';
+      setErrorMessage(apiError);
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div className="max-w-xl mx-auto px-6 py-12 text-ultrasonic-blue-50 min-h-[80vh] flex flex-col justify-center">
       
-      {/* Cabeçalho alinhado com CadastrarViagem */}
       <div className="mb-8">
-        <h1 className="text-3xl font-extrabold text-ultrasonic-blue-300 mb-2">
-          {isRegister ? 'Criar Conta' : 'Entrar no Rachou'}
-        </h1>
+        <h1 className="text-3xl font-extrabold text-ultrasonic-blue-300 mb-2">Entrar no Rachou</h1>
         <p className="text-ultrasonic-blue-50 font-semibold text-sm">
-          {isRegister 
-            ? 'Cadastre-se para começar a compartilhar suas caronas.' 
-            : 'Faça login para buscar ou publicar novos trajetos.'}
+          Faça login para buscar ou publicar novos trajetos.
         </p>
       </div>
 
-      {/* Formulário com a mesma estrutura de container do CadastrarViagem */}
       <form 
         onSubmit={handleSubmit} 
         className="flex flex-col gap-5 bg-ultrasonic-blue-950 border border-ultrasonic-blue-900 p-8 rounded-2xl shadow-lg"
       >
-        
-        {/* Campo Nome (Apenas no Cadastro) */}
-        {isRegister && (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-300">Nome Completo</label>
-            <input
-              type="text"
-              name="nome"
-              value={formData.nome}
-              onChange={handleChange}
-              placeholder="Ex: Ana Maria Silva"
-              className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-ultrasonic-blue-400 transition-all"
-              required
-            />
+        {errorMessage && (
+          <div className="bg-red-900/40 border border-red-500 text-red-200 text-sm p-3 rounded-xl text-center">
+            ⚠️ {errorMessage}
           </div>
         )}
 
-        {/* Campo E-mail / Usuário */}
+        {successMessage && (
+          <div className="bg-emerald-900/40 border border-emerald-500 text-emerald-200 text-sm p-3 rounded-xl text-center">
+            ✅ {successMessage}
+          </div>
+        )}
+
         <div className="flex flex-col gap-2">
-          <label className="text-sm font-medium text-slate-300">E-mail (Usuário)</label>
+          <label className="text-sm font-medium text-slate-300">E-mail</label>
           <input
             type="email"
-            name="usuario"
-            value={formData.usuario}
+            name="email"
+            value={formData.email}
             onChange={handleChange}
             placeholder="Ex: passageiro@email.com"
             className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-ultrasonic-blue-400 transition-all"
@@ -84,22 +84,6 @@ export default function Login() {
           />
         </div>
 
-        {/* Campo Foto URL (Apenas no Cadastro) */}
-        {isRegister && (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm font-medium text-slate-300">Foto de Perfil (URL Link)</label>
-            <input
-              type="url"
-              name="foto"
-              value={formData.foto}
-              onChange={handleChange}
-              placeholder="Ex: https://github.com/usuario.png"
-              className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-ultrasonic-blue-400 transition-all"
-            />
-          </div>
-        )}
-
-        {/* Campo Senha */}
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium text-slate-300">Senha</label>
           <input
@@ -113,29 +97,30 @@ export default function Login() {
           />
         </div>
 
-        {/* Botão de Enviar com idêntica estilização */}
         <button
           type="submit"
-          className="mt-4 bg-ultrasonic-blue-500 hover:bg-ultrasonic-blue-600 text-white font-semibold py-3 rounded-xl transition-all shadow-md active:scale-98"
+          disabled={loading}
+          className="mt-4 bg-ultrasonic-blue-500 hover:bg-ultrasonic-blue-600 disabled:bg-slate-800 disabled:text-slate-500 text-white font-semibold py-3 rounded-xl transition-all shadow-md active:scale-98 flex justify-center items-center gap-2"
         >
-          {isRegister ? 'Finalizar Cadastro' : 'Entrar na Conta'}
+          {loading ? (
+            <>
+              <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+              Entrando...
+            </>
+          ) : (
+            'Entrar na Conta'
+          )}
         </button>
 
-        {/* Link para Alternar Telas integrado suavemente abaixo do botão */}
         <div className="text-center mt-3 pt-4 border-t border-slate-800/60">
-          <p className="text-xs text-slate-400">
-            {isRegister ? 'Já tem uma conta no Rachou?' : 'Ainda não possui cadastro?'}
-          </p>
-          <button
-            type="button"
-            onClick={() => {
-              setIsRegister(!isRegister);
-              setFormData({ nome: '', usuario: '', senha: '', foto: '' });
-            }}
-            className="text-sm font-semibold text-ultrasonic-blue-300 hover:text-ultrasonic-blue-200 mt-1 transition-colors underline underline-offset-4"
+          <p className="text-xs text-slate-400">Ainda não possui cadastro?</p>
+          {/* Navega diretamente para a rota /cadastrousuario */}
+          <Link
+            to="/cadastro/usuario"
+            className="inline-block text-sm font-semibold text-ultrasonic-blue-300 hover:text-ultrasonic-blue-200 mt-1 transition-colors underline underline-offset-4"
           >
-            {isRegister ? 'Acessar com Login' : 'Criar nova conta grátis'}
-          </button>
+            Criar nova conta grátis
+          </Link>
         </div>
 
       </form>

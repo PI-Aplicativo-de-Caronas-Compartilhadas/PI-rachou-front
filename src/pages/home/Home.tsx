@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import passageira from "../../assets/passageira-home.jpg";
 import { useState } from "react";
 import { SearchModal } from "../../components/modal/VerCarona";
+import { CaronaText } from "../../components/caronatext/CaronaText";
 
 function Home() {
   // Estado para controlar a abertura do modal
@@ -27,6 +28,8 @@ function Home() {
             O <strong>Rachou</strong> conecta motoristas e passageiros para
             viagens mais econômicas, inteligentes e colaborativas.
           </p>
+          
+          <CaronaText />
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             {/* Botão atualizado para disparar a abertura do modal */}

@@ -27,7 +27,7 @@ export default function Navbar() {
         <div className="flex-1 max-w-md mx-auto relative hidden md:block">
           <input
             type="text"
-            placeholder="Procurar carona"
+            placeholder="Rachar para onde?"
             className="w-full bg-[oklch(20.20%_0.051_277.68)] text-white placeholder-[oklch(76.31%_0.097_283.87)] text-sm rounded-full pl-12 pr-4 py-2.5 border border-[oklch(23.84%_0.118_272.92)] focus:outline-none focus:border-[oklch(64.35%_0.151_281.28)] focus:ring-1 focus:ring-[oklch(64.35%_0.151_281.28)] transition-all duration-200"
           />
           <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg text-[oklch(76.31%_0.097_283.87)] pointer-events-none">

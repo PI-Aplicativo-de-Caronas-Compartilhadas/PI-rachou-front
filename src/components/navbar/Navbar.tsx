@@ -33,11 +33,19 @@ export default function Navbar() {
 
         {/* LADO DIREITO: OFERECER CARONA + ENTRAR (SEM EMOTICON) */}
         <div className="flex items-center space-x-6 shrink-0">
+          
           <Link
             to="/cadastrarviagem"
             className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-sm md:text-base font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-sm"
           >
             Oferecer Carona
+          </Link>
+
+           <Link
+            to="/modalidades"
+            className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
+          >
+            Modalidades
           </Link>
 
           <Link
@@ -46,6 +54,8 @@ export default function Navbar() {
           >
             Entrar
           </Link>
+
+          
         </div>
 
       </div>

@@ -6,11 +6,14 @@ import Sobre from './pages/sobre/Sobre';
 import ListaViagens from './pages/viagem/ListaViagens';
 import CadastrarViagem from './pages/viagem/CadastrarViagem';
 import { AuthProvider } from './contexts/AuthContext';
+import { Modalidades } from './pages/modalidades/Modalidades';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <>
       <AuthProvider>
+      <ToastContainer limit={1}/>        
       <BrowserRouter>
         <Navbar />
         <div className="min-h-[calc(100vh-10rem)] bg-slate-950">
@@ -20,6 +23,7 @@ function App() {
             <Route path="/sobre" element={<Sobre />} />
             <Route path="/viagens" element={<ListaViagens />} />
             <Route path="/cadastrarviagem" element={<CadastrarViagem />} />
+            <Route path="/modalidades" element={<Modalidades />} />
           </Routes>
         </div>
         <Footer />

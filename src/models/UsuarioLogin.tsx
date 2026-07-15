@@ -1,5 +1,5 @@
 
-export default interface usuario {
+export default interface usuarioLogin {
     id: number;
     nome: string;
     email: string;
@@ -7,4 +7,5 @@ export default interface usuario {
     senha: string;
     foto: string;
     tipo: string;
+    token: string;
 };

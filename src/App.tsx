@@ -5,7 +5,8 @@ import Home from './pages/home/Home';
 import Sobre from './pages/sobre/Sobre';
 import ListaViagens from './pages/viagem/ListaViagens';
 import CadastrarViagem from './pages/viagem/CadastrarViagem';
-import Login from './pages/login/Login'; // 1. Adicionamos a importação da página de Login
+import Login from './pages/login/Login'; 
+import CadastroUsuario from './pages/cadastrousuario/CadastroUsuario'; // Importando a nova tela de cadastro
 import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
@@ -22,8 +23,9 @@ function App() {
               <Route path="/viagens" element={<ListaViagens />} />
               <Route path="/cadastrarviagem" element={<CadastrarViagem />} />
               
-              {/* 2. Adicionamos a rota para carregar a tela de Login/Cadastro */}
               <Route path="/login" element={<Login />} /> 
+              {/* Rota dedicada para o Cadastro do Usuário */}
+              <Route path="/cadastro/usuario" element={<CadastroUsuario />} /> 
             </Routes>
           </div>
           <Footer />

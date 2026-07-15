@@ -1,4 +1,14 @@
+/* ===========================
+   Google Fonts
+=========================== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap");
+/* ===========================
+   Tailwind CSS
+=========================== */
 @import "tailwindcss";
+/* ===========================
+   Tema Rachou
+=========================== */
 @theme {
   --color-ultrasonic-blue-50: #eaeafb;
   --color-ultrasonic-blue-100: #d4d4f7;
@@ -11,4 +21,13 @@
   --color-ultrasonic-blue-800: #111155;
   --color-ultrasonic-blue-900: #08082b;
   --color-ultrasonic-blue-950: #06061e;
+}
+
+/* ===========================
+   Estilos Globais
+=========================== */
+
+html {
+  font-family: "Poppins", sans-serif;
+  scroll-behavior: smooth;
 }

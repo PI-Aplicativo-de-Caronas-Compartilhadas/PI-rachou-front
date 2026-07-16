@@ -5,6 +5,7 @@ import {
     FaRoute,
     FaHandshake,
 } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function Sobre() {
     return (
@@ -180,18 +181,19 @@ function Sobre() {
 
                 </section>
 
-                <div className="text-center bg-ultrasonic-blue-500 rounded-3xl py-14 px-8">
-
+                <Link
+                    to="/viagens"
+                    className="block text-center bg-ultrasonic-blue-500 rounded-3xl py-14 px-8 transition-all duration-300 hover:bg-ultrasonic-blue-400 hover:scale-[1.02] hover:shadow-2xl cursor-pointer"
+                >
                     <h2 className="text-4xl font-bold text-white mb-5">
-                        Vamos dividir o caminho?
+                        Bora rachar uma corrida?
                     </h2>
 
                     <p className="text-ultrasonic-blue-100 text-lg max-w-3xl mx-auto">
-                        Faça parte do Rachou e descubra uma forma mais econômica,
-                        sustentável e inteligente de viajar.
+                        Encontre uma viagem ou ofereça uma carona e faça parte de uma mobilidade
+                        mais econômica, sustentável e colaborativa.
                     </p>
-
-                </div>
+                </Link>
 
             </div>
 

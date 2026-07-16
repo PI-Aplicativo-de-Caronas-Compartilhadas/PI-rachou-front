@@ -17,13 +17,13 @@ export function ListaModalidade(){
     const { usuario, handleLogout } = useContext(AuthContext);
     const token = usuario.token;
 
-    /*useEffect(() => {
+    useEffect(() => {
         if (token === "") {
             navigate("/")
             Toast("Você precisa estar logado.", "info");
         }
     }, [token]);
-    */
+    
     useEffect(() => {
         buscarModalidades();
     }, [modalidades.length]);
@@ -36,11 +36,6 @@ export function ListaModalidade(){
                 headers: { Authorization: token }
             })
         } catch (error: any) {
-            if (error.toString().includes("401")) {
-                handleLogout();
-                //navigate("/home");
-            }
-
             if(error.toString().includes("500")) {
                 Toast("Erro inesperado ao buscar modalidades", "erro");                
             }

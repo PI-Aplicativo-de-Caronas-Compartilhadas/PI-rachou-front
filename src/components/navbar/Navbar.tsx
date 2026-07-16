@@ -1,7 +1,24 @@
 import { Link } from "react-router-dom";
 import WeatherWidget from '../weather/WeatherWidget'; // Importando o Widget
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function Navbar() {
+
+  const { usuario, handleLogout } = useContext(AuthContext);
+
+  const [ estaLogado, setEstaLogado ] = useState(false);
+
+  const token = usuario.token;
+
+  useEffect(() => {
+    if (usuario.token !== "") {
+      setEstaLogado(true);
+    } else {
+      setEstaLogado(false);
+    }
+  }, [token]);
+  
   return (
     <nav className="w-full bg-[oklch(14.20%_0.051_277.68)] text-white border-b border-[oklch(23.84%_0.118_272.92)] sticky top-0 z-50 shadow-md">
       {/* Ajustado: px-4 no mobile para não espremer os cantos, gap menor para evitar empurrar elementos para fora */}
@@ -37,6 +54,10 @@ export default function Navbar() {
 
         {/* LADO DIREITO: OFERECER CARONA + ENTRAR (SEM EMOTICON) */}
         <div className="flex items-center space-x-6 shrink-0">
+
+          <div className="shrink-0 scale-90 xs:scale-100 origin-center">
+            <WeatherWidget />
+          </div>
           
           <Link
             to="/cadastrarviagem"
@@ -45,21 +66,31 @@ export default function Navbar() {
             Oferecer Carona
           </Link>
 
-           <Link
+          {estaLogado && 
+            <Link
             to="/modalidades"
             className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
           >
             Modalidades
           </Link>
+          }          
 
+          { estaLogado ?
+            <button
+            onClick={handleLogout}
+            className="hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)]
+            hover:text-white hover:cursor-pointer text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg
+            transition-all duration-200">
+              Sair
+            </button>
+          :
           <Link
             to="/login"
-            className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all duration-200 whitespace-nowrap"
+            className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] xs:text-xs sm:text-sm md:text-[14px] font-semibold px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all duration-200 whitespace-nowrap"
           >
             Entrar
-          </Link>
+          </Link>}   
 
-          
         </div>
 
       </div>

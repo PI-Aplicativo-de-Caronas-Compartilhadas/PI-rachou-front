@@ -1,6 +1,6 @@
 
 export interface Modalidade {
-    id: number;
+    id?: number;
     nome: string;
     descricao: string;
 };

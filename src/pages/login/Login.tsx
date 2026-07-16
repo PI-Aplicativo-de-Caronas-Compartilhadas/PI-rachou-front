@@ -1,45 +1,49 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import type { ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
-import { login } from '../../services/Service'; // Ajuste o caminho até o Service.ts
+import { Link, useNavigate } from 'react-router-dom';
+import type UsuarioLogin from '../../models/UsuarioLogin';
+import { AuthContext } from '../../contexts/AuthContext';
 
-export default function Login() {
+export function Login() {
+
+  const navigate = useNavigate();
+
+  const { handleLogin } = useContext(AuthContext);
+
+  const [usuarioLogin, setUsuarioLogin] = useState<UsuarioLogin>(
+        {} as UsuarioLogin
+  );
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [userResponse, setUserResponse] = useState<any>(null);
-
-  const [formData, setFormData] = useState({
-    email: '', 
-    senha: '',
-  });
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    setFormData({
-      ...formData,
+    setUsuarioLogin({
+      ...usuarioLogin,
       [e.target.name]: e.target.value,
     });
   }
 
-  async function handleSubmit(e: FormEvent) {
+  async function login(e: FormEvent) {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
     setLoading(true);
 
     try {
-      await login('/usuarios/logar', {
-        usuario: formData.email, // Atende ao backend (/usuarios/logar espera "usuario")
-        senha: formData.senha,
-      }, setUserResponse);
+      await handleLogin(usuarioLogin);
 
-      setSuccessMessage('Login efetuado com sucesso! Redirecionando...');
-      // Aqui posteriormente você direciona para a home pós-login ou atualiza o AuthContext
+      navigate("/home");
 
     } catch (error: any) {
-      console.error('Erro no login:', error);
+
+      if (error.toString().includes("500")) {
+        setErrorMessage("Erro interno, por favor tente novamente mais tarde.");
+      }
+
       const apiError = error.response?.data?.message || 'E-mail ou senha inválidos.';
       setErrorMessage(apiError);
+      
     } finally {
       setLoading(false);
     }
@@ -56,7 +60,7 @@ export default function Login() {
       </div>
 
       <form 
-        onSubmit={handleSubmit} 
+        onSubmit={login} 
         className="flex flex-col gap-5 bg-ultrasonic-blue-950 border border-ultrasonic-blue-900 p-8 rounded-2xl shadow-lg"
       >
         {errorMessage && (
@@ -76,7 +80,7 @@ export default function Login() {
           <input
             type="email"
             name="email"
-            value={formData.email}
+            value={usuarioLogin.email}
             onChange={handleChange}
             placeholder="Ex: passageiro@email.com"
             className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-ultrasonic-blue-400 transition-all"
@@ -89,7 +93,7 @@ export default function Login() {
           <input
             type="password"
             name="senha"
-            value={formData.senha}
+            value={usuarioLogin.senha}
             onChange={handleChange}
             placeholder="Digite sua senha"
             className="bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 focus:outline-none focus:border-ultrasonic-blue-400 transition-all"
@@ -125,5 +129,7 @@ export default function Login() {
 
       </form>
     </div>
-  );
-}
+  )
+};
+
+export default Login;

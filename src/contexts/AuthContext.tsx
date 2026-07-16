@@ -1,6 +1,7 @@
 import { createContext, useState, type ReactNode } from "react";
 import type usuarioLogin from "../models/UsuarioLogin";
 import { login } from "../services/Service";
+import Toast from "../utils/Toast";
 
 interface AuthContextProps {
     usuario: usuarioLogin;
@@ -15,17 +16,26 @@ interface AuthProviderProps {
 
 export const AuthContext = createContext({} as AuthContextProps);
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps) {   
 
-    const [usuario, setUsuario] = useState<usuarioLogin>({
-        id: 0,
-        nome: "",
-        email: "",
-        telefone: "",
-        senha: "",
-        foto: "",
-        tipo: "",
-        token: "" 
+    const [usuario, setUsuario] = useState<usuarioLogin>(() => {
+
+        const usuarioStorage = localStorage.getItem("usuario");
+
+        if (usuarioStorage) {
+            return JSON.parse(usuarioStorage);            
+        }
+
+        return {
+            id: 0,
+            nome: "",
+            email: "",
+            telefone: "",
+            senha: "",
+            foto: "",
+            tipo: "",
+            token: "" 
+        }        
     });
 
     const [ isLoading, setIsLoading ] = useState(false);
@@ -34,12 +44,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         
         setIsLoading(true);
 
-        try {
-            await login("/usuarios/logar", usuarioLogin, setUsuario);
-            alert("Usuário autenticado com sucesso!");
-        } catch(error) {
-           alert("Erro ao autenticar usuário.");
-        }
+        await login("/usuarios/logar", usuarioLogin, setUsuario);
 
         setIsLoading(false);
     };
@@ -55,6 +60,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             tipo: "",
             token: "" 
         })
+
+        localStorage.removeItem("usuario");
+
+        Toast("Você foi desconectado com sucesso.", "sucesso");
     };
 
     return (

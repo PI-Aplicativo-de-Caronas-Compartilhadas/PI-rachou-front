@@ -23,9 +23,12 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/sobre" element={<Sobre />} />
+            <Route path="/cadastro/usuario" element={<CadastroUsuario />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/viagens" element={<ListaViagens />} />
-            <Route path="/cadastrarviagem" element={<CadastrarViagem />} />
+            <Route path="/cadastrarviagem" element={<CadastrarViagem />} />            
             <Route path="/modalidades" element={<Modalidades />} />
+
           </Routes>
         </div>
         <Footer />

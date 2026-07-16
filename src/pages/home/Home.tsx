@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
-import passageira from "../../assets/passageira-home.jpg";
 import { useState } from "react";
+import passageirosHome from "../../assets/passageiros-home.jpeg"; // Importando a nova imagem
 import { SearchModal } from "../../components/modal/VerCarona";
 import { CaronaText } from "../../components/caronatext/CaronaText";
 
 function Home() {
   // Estado para controlar a abertura do modal
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_center,_var(--color-ultrasonic-blue-800),_var(--color-ultrasonic-blue-950))] px-4 py-8 md:px-12 md:py-16 flex items-center justify-center">
       {/* Ajustes:
@@ -57,10 +58,10 @@ function Home() {
 
         {/* Coluna da Imagem */}
         <div className="flex-1 w-full">
-          {/* Ajuste de altura responsiva: h-64 em celular, h-96 em tablet, h-[500px] em desktop */}
+          {/* Ajuste de altura responsiva usando a nova imagem importada */}
           <img
-            src={passageira}
-            alt="Motorista sorrindo"
+            src={passageirosHome}
+            alt="Passageiros no carro compartilhando carona"
             className="w-full h-64 md:h-96 lg:h-[500px] object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
           />
         </div>

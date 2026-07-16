@@ -1,12 +1,17 @@
 import { useState } from "react";
 import { cidades } from "../../data/cidades";
-// SearchModal.tsx
+import { CardResultado } from "./CardCarona";
+import { buscarViagens } from "../../services/Service";
+import { useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
+  const { usuario } = useContext(AuthContext);
   const [origem, setOrigem] = useState("");
   const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
 
@@ -14,6 +19,11 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [mostrarSugestoesDestino, setMostrarSugestoesDestino] = useState(false);
 
   const [passageiros, setPassageiros] = useState("");
+
+  //const [mostrarResultado, setMostrarResultado] = useState(false);
+
+  //const [viagens, setViagens] = useState<any[]>([]);
+  const [resultado, setResultado] = useState<any | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setOrigem(e.target.value);
@@ -32,6 +42,42 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const cidadesFiltradasDestino = cidades.filter((cidade) =>
     cidade.toLowerCase().includes(destino.toLowerCase()),
   );
+
+  const normalizarTexto = (texto: string) =>
+    texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .trim()
+      .toLowerCase();
+
+  const procurarCarona = async () => {
+    console.log("Botão clicado!");
+
+    const token =
+      "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqb2FvLnNpbHZhQGV4ZW1wbG8uY29tIiwiaWF0IjoxNzg0MjA3NTQ0LCJleHAiOjE3ODQyMTExNDR9.R86XBLRt6AOAhYkskytjBFXf4_HAbDW9tAnrQQD5lu9ma49B9_4zrP6NOcpz1vci";
+
+    const viagens = await buscarViagens("/viagens", token);
+    console.log(token);
+    console.log(viagens);
+    console.log("Origem digitada:", origem);
+    console.log("Destino digitado:", destino);
+    viagens.forEach((viagem) => {
+      console.log(
+        viagem.origem,
+        viagem.destino,
+        viagem.origem.toLowerCase() === origem.toLowerCase(),
+        viagem.destino.toLowerCase() === destino.toLowerCase(),
+      );
+    });
+
+    const viagemEncontrada = viagens.find(
+      (viagem) =>
+        normalizarTexto(viagem.origem) === normalizarTexto(origem) &&
+        normalizarTexto(viagem.destino) === normalizarTexto(destino),
+    );
+    console.log("Viagem encontrada:", viagemEncontrada);
+    setResultado(viagemEncontrada ?? null);
+  };
 
   if (!isOpen) return null;
 
@@ -142,9 +188,23 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               <option value="4">4 adultos</option>
             </select>
           </div>
-          <button className="mt-2 w-full bg-ultrasonic-blue-500 text-white py-4 rounded-xl font-bold hover:bg-ultrasonic-blue-600 transition">
+          <button
+            onClick={procurarCarona}
+            className="mt-2 w-full bg-ultrasonic-blue-500 text-white py-4 rounded-xl font-bold hover:bg-ultrasonic-blue-600 transition"
+          >
             Procurar
           </button>
+
+          {resultado && (
+            <CardResultado
+              origem={resultado.origem}
+              destino={resultado.destino}
+              previsaoSaida={resultado.previsaoSaida}
+              previsaoChegada={resultado.previsaoChegada}
+              distancia={0}
+              tempo=""
+            />
+          )}
         </div>
       </div>
     </div>

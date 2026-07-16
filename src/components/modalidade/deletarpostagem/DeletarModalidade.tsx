@@ -60,7 +60,7 @@ export function DeletarModalidade( {atualizarLista, idModalidade } : DeletarModa
             Toast('Modalidade apagada com sucesso.', 'sucesso');
 
         } catch (error: any) {
-            if (error.toString().includes('500')) {
+            if (error.toString().includes('401')) {
                 handleLogout()
             }else {
                 Toast('Erro interno ao deletar a postagem.', 'erro');

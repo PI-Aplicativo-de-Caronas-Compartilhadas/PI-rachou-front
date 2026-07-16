@@ -6,27 +6,31 @@ import Toast from "../../../utils/Toast";
 import { buscar } from "../../../services/Service";
 import CardModalidade from "../cardmodalidade/CardModalidade";
 
-export function ListaModalidade(){
+interface ListaModalidadesProps {
+    reload: boolean;
+}
+
+export function ListaModalidades({ reload }: ListaModalidadesProps) {
 
     const navigate = useNavigate();
 
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    const [ modalidades, setModalidades ] = useState<Modalidade[]>([]);
+    const [modalidades, setModalidades] = useState<Modalidade[]>([]);
 
-    const { usuario, handleLogout } = useContext(AuthContext);
+    const { usuario } = useContext(AuthContext);
     const token = usuario.token;
 
     useEffect(() => {
         if (token === "") {
-            navigate("/")
+            navigate("/");
             Toast("Você precisa estar logado.", "info");
         }
     }, [token]);
-    
+
     useEffect(() => {
         buscarModalidades();
-    }, [modalidades.length]);
+    }, [reload]);
 
     async function buscarModalidades() {
         setIsLoading(true);
@@ -34,26 +38,36 @@ export function ListaModalidade(){
         try {
             await buscar("/modalidades", setModalidades, {
                 headers: { Authorization: token }
-            })
+            });
+
         } catch (error: any) {
-            if(error.toString().includes("500")) {
-                Toast("Erro inesperado ao buscar modalidades", "erro");                
+            if (error.toString().includes("500")) {
+                Toast("Erro inesperado ao buscar modalidades", "erro");
             }
+
         } finally {
             setIsLoading(false);
         }
-    };
+    }
+
 
     return (
-        <div className="flex flex-wrap w-[85%]">      
+        <div className="flex flex-wrap w-[85%]">
+
             <div className="flex md:flex-wrap w-full gap-8 bg-ultrasonic-blue-200/10 backdrop-blur-xl border
-                border-ultrasonic-blue-400/50 text-ultrasonic-blue-100 p-8">                
-                    <CardModalidade />
-                    <CardModalidade />                
+                border-ultrasonic-blue-400/50 text-ultrasonic-blue-100 p-8">
+
+                {modalidades.map((mod) => (
+                    <CardModalidade 
+                        key={mod.id} 
+                        modalidade={mod}
+                    />
+                ))}
+
             </div>
-        </div> 
 
-    )
-};
+        </div>
+    );
+}
 
-export default ListaModalidade;
+export default ListaModalidades;

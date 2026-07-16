@@ -1,7 +1,23 @@
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../contexts/AuthContext";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
+
+  const { usuario } = useContext(AuthContext);
+  
+  const [ estaLogado, setEstaLogado ] = useState(false);
+  
+  const token = usuario.token;
+  
+  useEffect(() => {
+    if (usuario.token !== "") {
+      setEstaLogado(true);
+    } else {
+      setEstaLogado(false);
+    }
+  }, [token]);
 
   return (
     <footer className="w-full bg-[oklch(14.20%_0.051_277.68)] text-[oklch(88.10%_0.048_285.37)] border-t border-[oklch(23.84%_0.118_272.92)]">
@@ -31,9 +47,16 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-base">
               <li>
-                <a href="/viagens" className="hover:text-white transition-colors duration-200 font-medium">
+                { estaLogado ? (
+                  <Link to="/viagens" className="hover:text-white transition-colors duration-200 font-medium">
                   Procurar Carona
-                </a>
+                  </Link>
+                ) : (
+                  <Link to="/login" className="hover:text-white transition-colors duration-200 font-medium">
+                  Procurar Carona
+                  </Link>
+                )}
+                
               </li>
               <li>
                 <Link to="/sobre" className="hover:text-white transition-colors duration-200 font-medium">

@@ -1,16 +1,17 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
+import { EnvelopeSimpleIcon, GithubLogoIcon, InstagramLogoIcon, WhatsappLogoIcon } from "@phosphor-icons/react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   const { usuario } = useContext(AuthContext);
-  
-  const [ estaLogado, setEstaLogado ] = useState(false);
-  
+
+  const [estaLogado, setEstaLogado] = useState(false);
+
   const token = usuario.token;
-  
+
   useEffect(() => {
     if (usuario.token !== "") {
       setEstaLogado(true);
@@ -22,17 +23,17 @@ export default function Footer() {
   return (
     <footer className="w-full bg-[oklch(14.20%_0.051_277.68)] text-[oklch(88.10%_0.048_285.37)] border-t border-[oklch(23.84%_0.118_272.92)]">
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
-        
+
         {/* Grid Principal Alinhado com gap maior (gap-16) */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-start">
-          
+
           {/* Coluna 1: Sobre o Rachou */}
           <div className="flex flex-col space-y-4">
             <div className="h-12 flex items-center overflow-visible">
-              <img 
-                src="/logo.png" 
-                alt="Rachou Caronas" 
-                className="h-38 w-auto object-contain brightness-0 invert -my-8 origin-left" 
+              <img
+                src="/logo.png"
+                alt="Rachou Caronas"
+                className="h-38 w-auto object-contain brightness-0 invert -my-8 origin-left"
               />
             </div>
             <p className="text-base text-[oklch(76.31%_0.097_283.87)] leading-relaxed">
@@ -47,20 +48,25 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3 text-base">
               <li>
-                { estaLogado ? (
+                {estaLogado ? (
                   <Link to="/viagens" className="hover:text-white transition-colors duration-200 font-medium">
-                  Procurar Carona
+                    Procurar Carona
                   </Link>
                 ) : (
                   <Link to="/login" className="hover:text-white transition-colors duration-200 font-medium">
-                  Procurar Carona
+                    Procurar Carona
                   </Link>
                 )}
-                
+
               </li>
               <li>
                 <Link to="/sobre" className="hover:text-white transition-colors duration-200 font-medium">
                   Sobre Nós
+                </Link>
+              </li>
+              <li>
+                <Link to="/viagens" className="hover:text-white transition-colors duration-200 font-medium">
+                  Caronas Disponíveis
                 </Link>
               </li>
             </ul>
@@ -75,9 +81,10 @@ export default function Footer() {
               Dúvidas ou sugestões? Fale conosco!
             </p>
             <div className="flex space-x-6 text-2xl pt-1">
-              <a href="#" className="hover:text-white transition-colors duration-200">🌐</a>
-              <a href="#" className="hover:text-white transition-colors duration-200">📸</a>
-              <a href="#" className="hover:text-white transition-colors duration-200">👔</a>
+              <a href="#" className="hover:text-white transition-colors duration-200"><EnvelopeSimpleIcon size={28} /></a>
+              <a href="#" className="hover:text-white transition-colors duration-200"><InstagramLogoIcon size={28} /></a>
+              <a href="#" className="hover:text-white transition-colors duration-200"><WhatsappLogoIcon size={28} /></a>
+              <a href="#" className="hover:text-white transition-colors duration-200"><GithubLogoIcon size={28} /></a>
             </div>
           </div>
 

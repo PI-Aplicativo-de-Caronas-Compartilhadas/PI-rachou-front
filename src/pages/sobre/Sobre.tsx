@@ -4,6 +4,9 @@ import {
     FaLeaf,
     FaRoute,
     FaHandshake,
+    FaBullseye,
+    FaEye,
+    FaHeart,
 } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
@@ -92,6 +95,8 @@ function Sobre() {
 
                     <div className="bg-ultrasonic-blue-200/10 backdrop-blur-lg rounded-2xl p-8 border border-ultrasonic-blue-400/30">
 
+                        <FaBullseye className="text-5xl text-ultrasonic-blue-300 mb-6" />
+
                         <h3 className="text-2xl text-white font-bold mb-4">
                             Missão
                         </h3>
@@ -105,6 +110,8 @@ function Sobre() {
 
                     <div className="bg-ultrasonic-blue-200/10 backdrop-blur-lg rounded-2xl p-8 border border-ultrasonic-blue-400/30">
 
+                        <FaEye className="text-5xl text-ultrasonic-blue-300 mb-6" />
+
                         <h3 className="text-2xl text-white font-bold mb-4">
                             Visão
                         </h3>
@@ -117,6 +124,8 @@ function Sobre() {
                     </div>
 
                     <div className="bg-ultrasonic-blue-200/10 backdrop-blur-lg rounded-2xl p-8 border border-ultrasonic-blue-400/30">
+
+                        <FaHeart className="text-5xl text-ultrasonic-blue-300 mb-6" />
 
                         <h3 className="text-2xl text-white font-bold mb-4">
                             Valores

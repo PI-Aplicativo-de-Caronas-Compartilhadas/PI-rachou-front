@@ -1,7 +1,21 @@
 import { PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import type { Modalidade } from "../../../models/Modalidade";
+import FormModalidade from "../formmodalidade/FormModalidade";
+import { useState } from "react";
+import ModalModalidade from "../modalmodalidade/ModalModalidade";
+import DeletarModalidade from "../deletarpostagem/DeletarModalidade";
 
-function CardModalidade ( ) {
+interface CardModalidadeProps {
+    modalidade: Modalidade;
+};
+
+function CardModalidade ( { modalidade }: CardModalidadeProps ) {
+
+    const [reload, setReload] = useState(false);
+
+    function atualizarLista() {
+    setReload(prev => !prev);
+}
     return (
 
         <div
@@ -16,25 +30,44 @@ function CardModalidade ( ) {
                 </span>
 
             <h2 className="mt-3 truncate text-xl font-bold text-white sm:text-2xl">
-                Carro
+                {modalidade.nome}
             </h2>
             </div>
         </div>
 
         <p className="mt-4 text-sm leading-6 text-gray-300 ">
-            Viaje com conforto e segurança utilizando transporte particular.
+            {modalidade.nome}
         </p>
 
         <div className="mt-5 h-px bg-ultrasonic-blue-600" />
 
         <div className="mt-4 flex justify-end gap-2">
-            <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-ultrasonic-blue-600 text-white transition hover:bg-ultrasonic-blue-500">
-            <PencilIcon size={18} weight="bold" />
+
+            <div          
+                className="flex h-10 w-10 items-center justify-center rounded-xl 
+                bg-ultrasonic-blue-600 text-white transition hover:bg-ultrasonic-blue-500">
+                <ModalModalidade
+                    icon={ <PencilIcon size={18} weight="bold"/> }
+                    idModalidade={modalidade.id}
+                    componente={<FormModalidade
+                    idModalidade={modalidade.id}
+                    atualizarLista={atualizarLista}/>}
+                />
+                
+            </div>
+
+            <button
+                className="flex h-10 w-10 items-center justify-center rounded-xl
+                bg-red-500 text-white transition hover:bg-red-600">
+                <ModalModalidade
+                icon={ <TrashIcon size={18} weight="bold" /> }
+                idModalidade={modalidade.id}
+                componente={<DeletarModalidade
+                idModalidade={modalidade.id}
+                atualizarLista={atualizarLista}/>}
+                />                
             </button>
 
-            <button className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500 text-white transition hover:bg-red-600">
-            <TrashIcon size={18} weight="bold" />
-            </button>
         </div>
     </div>
     )

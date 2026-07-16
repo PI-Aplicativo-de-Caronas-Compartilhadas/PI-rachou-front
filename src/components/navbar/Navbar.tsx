@@ -20,25 +20,20 @@ export default function Navbar() {
   }, [token]);
   
   return (
-    <nav className="w-full bg-[oklch(14.20%_0.051_277.68)]
-    text-white border-b border-[oklch(23.84%_0.118_272.92)]
-    sticky top-0 z-50 shadow-md">
+    <nav className="w-full bg-[oklch(14.20%_0.051_277.68)] text-white border-b border-[oklch(23.84%_0.118_272.92)] sticky top-0 z-50 shadow-md">
       {/* Ajustado: px-4 no mobile para não espremer os cantos, gap menor para evitar empurrar elementos para fora */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center
-      justify-between gap-3 sm:gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-8">
         
         {/* LADO ESQUERDO: LOGO DO RACHOU COM ANIMAÇÃO DE CLIQUE E BRILHO */}
         <div className="flex items-center shrink-0">
           <Link 
             to="/" 
-            className="flex items-center h-16 sm:h-20 overflow-visible
-            transition-all duration-150 hover:brightness-125 active:scale-95 active:opacity-80"
+            className="flex items-center h-16 sm:h-20 overflow-visible transition-all duration-150 hover:brightness-125 active:scale-95 active:opacity-80"
           >
             <img 
               src="/logo.png" 
               alt="Logo Rachou" 
-              className="h-24 sm:h-32 w-auto object-contain brightness-0
-              invert -my-4 sm:-my-6 origin-left transition-all" 
+              className="h-24 sm:h-32 w-auto object-contain brightness-0 invert -my-4 sm:-my-6 origin-left transition-all" 
             />
           </Link>
         </div>
@@ -60,39 +55,35 @@ export default function Navbar() {
             🔍
           </Link>
           
-          {/* BOTÃO OFERECER CARONA */}
-          <Link
-            to="/cadastrarviagem"
-            className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)]
-            text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold
-            px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200
-            shadow-sm whitespace-nowrap"
-          >
-            Oferecer Carona
-          </Link>
+          {/* BOTÃO OFERECER CARONA (Condicional fechada corretamente) */}
+          {estaLogado ? (
+            <Link
+              to="/cadastrarviagem"
+              className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200 shadow-sm whitespace-nowrap"
+            >
+              Oferecer Carona
+            </Link>
           ) : (
             <Link            
-            to="/login"
-            className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)]
-            text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold
-            px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200
-            shadow-sm whitespace-nowrap"
-          >
-            Oferecer Carona
-          </Link>
+              to="/login"
+              className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200 shadow-sm whitespace-nowrap"
+            >
+              Oferecer Carona
+            </Link>
+          )}
 
           {/* BOTÃO MODALIDADES (SE LOGADO) */}
-          {estaLogado && 
+          {estaLogado && (
             <Link
               to="/modalidades"
               className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
             >
               Modalidades
             </Link>
-          }          
+          )}          
 
           {/* BOTÃO ENTRAR / SAIR */}
-          { estaLogado ? (
+          {estaLogado ? (
             <button
               onClick={handleLogout}
               className="hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)] hover:text-white hover:cursor-pointer text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"

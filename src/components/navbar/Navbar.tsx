@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import WeatherWidget from '../weather/WeatherWidget'; // Importando o Widget
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { UserCircleCheckIcon, UserCircleIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
-
   const { usuario, handleLogout } = useContext(AuthContext);
-
-  const [ estaLogado, setEstaLogado ] = useState(false);
+  const [estaLogado, setEstaLogado] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para controlar o menu cascata no mobile
 
   const token = usuario.token;
 
@@ -18,13 +18,15 @@ export default function Navbar() {
       setEstaLogado(false);
     }
   }, [token]);
-  
+
+  // Função para fechar o menu ao clicar em um link
+  const closeMenu = () => setIsMenuOpen(false);
+
   return (
     <nav className="w-full bg-[oklch(14.20%_0.051_277.68)] text-white border-b border-[oklch(23.84%_0.118_272.92)] sticky top-0 z-50 shadow-md">
-      {/* Ajustado: px-4 no mobile para não espremer os cantos, gap menor para evitar empurrar elementos para fora */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-8">
         
-        {/* LADO ESQUERDO: LOGO DO RACHOU COM ANIMAÇÃO DE CLIQUE E BRILHO */}
+        {/* LADO ESQUERDO: LOGO DO RACHOU */}
         <div className="flex items-center shrink-0">
           <Link 
             to="/" 
@@ -38,70 +40,161 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* CENTRO: WIDGET DE CLIMA (Centralizado no Navbar) */}
+        {/* CENTRO: WIDGET DE CLIMA */}
         <div className="flex-1 flex justify-center shrink-0 scale-90 xs:scale-100 origin-center">
           <WeatherWidget />
         </div>
 
-        {/* LADO DIREITO: ÍCONE DE BUSCA + OFERECER CARONA + MODALIDADES / LOGIN / SAIR */}
+        {/* LADO DIREITO: NAVEGAÇÃO DESKTOP & MENU RESPONSIVO */}
         <div className="flex items-center space-x-4 sm:space-x-6 shrink-0">
-
-          {/* ÍCONE DE LUPA CLICÁVEL (Direciona para a lista de viagens) */}
-          <Link
-            to="/viagens"
-            title="Buscar Caronas"
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-[oklch(20.20%_0.051_277.68)] hover:bg-[oklch(23.84%_0.118_272.92)] border border-[oklch(23.84%_0.118_272.92)] text-lg transition-all duration-200 active:scale-95"
-          >
-            🔍
-          </Link>
           
-          {/* BOTÃO OFERECER CARONA (Condicional fechada corretamente) */}
-          {estaLogado ? (
+          {/* --- LINKS VISÍVEIS APENAS EM DESKTOP (md para cima) --- */}
+          <div className="hidden md:flex items-center space-x-4 lg:space-x-6">
+            {/* BOTÃO VER CARONAS */}
             <Link
-              to="/cadastrarviagem"
-              className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200 shadow-sm whitespace-nowrap"
+              to="/viagens"
+              className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-sm lg:text-base font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 whitespace-nowrap"
+            >
+              Ver Caronas
+            </Link>
+
+            {/* BOTÃO OFERECER CARONA */}
+            <Link
+              to={estaLogado ? "/cadastrarviagem" : "/login"}
+              className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-sm lg:text-base font-semibold px-4 lg:px-5 py-2.5 rounded-lg transition-all duration-200 shadow-sm whitespace-nowrap"
             >
               Oferecer Carona
             </Link>
-          ) : (
-            <Link            
-              to="/login"
-              className="bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white text-[11px] xs:text-xs sm:text-sm md:text-base font-semibold px-2.5 xs:px-4 sm:px-5 py-2 sm:py-2.5 rounded-lg transition-all duration-200 shadow-sm whitespace-nowrap"
-            >
-              Oferecer Carona
-            </Link>
-          )}
 
-          {/* BOTÃO MODALIDADES (SE LOGADO) */}
-          {estaLogado && (
-            <Link
-              to="/modalidades"
-              className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
-            >
-              Modalidades
-            </Link>
-          )}          
+            {/* BOTÃO MODALIDADES (SE LOGADO) */}
+            {estaLogado && (
+              <Link
+                to="/modalidades"
+                className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-sm lg:text-base font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
+              >
+                Modalidades
+              </Link>
+            )}
+          </div>
 
-          {/* BOTÃO ENTRAR / SAIR */}
-          {estaLogado ? (
-            <button
-              onClick={handleLogout}
-              className="hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)] hover:text-white hover:cursor-pointer text-[10px] md:text-[14px] font-semibold px-4 py-2.5 rounded-lg transition-all duration-200"
-            >
-              Sair
-            </button>
-          ) : (
-            <Link
-              to="/login"
-              className="hover:bg-[oklch(23.84%_0.118_272.92)] text-[oklch(88.10%_0.048_285.37)] hover:text-white text-[10px] xs:text-xs sm:text-sm md:text-[14px] font-semibold px-2 xs:px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg transition-all duration-200 whitespace-nowrap"
-            >
-              Entrar
-            </Link>
-          )}   
+          {/* AVATAR DE USUÁRIO / ENTRAR (Desktop e Mobile) */}
+<div className="relative flex items-center">
+  {estaLogado ? (
+    <div className="flex items-center gap-3">
+      {/* Se o usuário logado tiver foto, mostra a foto. Caso contrário, mostra o ícone do avatar */}
+      {usuario.foto ? (
+        <img
+          src={usuario.foto}
+          alt={`Foto de ${usuario.nome}`}
+          className="w-10 h-10 rounded-full border border-[oklch(23.84%_0.118_272.92)] object-cover shadow-sm"
+          title={usuario.nome}
+        />
+      ) : (
+        <div className="text-[oklch(88.10%_0.048_285.37)]" title={usuario.nome}>
+          <UserCircleIcon size={32} />
+        </div>
+      )}
+      
+      <button
+        onClick={handleLogout}
+        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)] hover:text-white text-xs lg:text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-200"
+      >
+        Sair
+      </button>
+    </div>
+  ) : (
+    /* Antes de logar: exibe o ícone de avatar padrão que direciona para a página de login */
+    <Link
+      to="/login"
+      className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 active:scale-95"
+      title="Entrar na Conta"
+    >
+      <UserCircleIcon size={32} />
+    </Link>
+  )}
+</div>
+
+          {/* BOTÃO DO MENU HAMBÚRGUER (Visível apenas em Mobile) */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            type="button"
+            className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-[oklch(20.20%_0.051_277.68)] transition-all gap-1.5 focus:outline-none"
+            aria-label="Abrir Menu"
+          >
+            {/* Linhas do hambúrguer que viram um "X" quando aberto */}
+            <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
+            <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
+            <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+          </button>
 
         </div>
-
       </div>
+
+      {/* --- MENU CASCATA RESPONSIVO --- */}
+      {isMenuOpen && (
+        <div className="md:hidden w-full bg-[oklch(14.20%_0.051_277.68)] border-t border-[oklch(23.84%_0.118_272.92)] shadow-xl animate-slide-down">
+          <div className="flex flex-col px-6 py-4 space-y-4">
+            
+            {/* Opção 1: Ver Caronas */}
+            <Link
+              to="/viagens"
+              onClick={closeMenu}
+              className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+            >
+              Ver Caronas
+            </Link>
+
+            {/* Opção 2: Oferecer Caronas */}
+            <Link
+              to={estaLogado ? "/cadastrarviagem" : "/login"}
+              onClick={closeMenu}
+              className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+            >
+              Oferecer Carona
+            </Link>
+
+            {/* Opção 3: Sobre */}
+            <Link
+              to="/sobre"
+              onClick={closeMenu}
+              className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+            >
+              Sobre
+            </Link>
+
+            {/* Opções extras para mobile caso esteja logado */}
+            {estaLogado ? (
+              <>
+                <Link
+                  to="/modalidades"
+                  onClick={closeMenu}
+                  className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+                >
+                  Modalidades
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    closeMenu();
+                  }}
+                  className="text-red-400 hover:text-red-300 font-bold py-2 text-left transition-all"
+                >
+                  Sair do Rachou
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={closeMenu}
+                className="text-emerald-400 hover:text-emerald-300 font-bold py-2 transition-all"
+              >
+                Acessar Conta
+              </Link>
+            )}
+
+          </div>
+        </div>
+      )}
     </nav>
   );
 }

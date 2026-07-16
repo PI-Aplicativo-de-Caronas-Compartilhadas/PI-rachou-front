@@ -30,3 +30,16 @@ export const cadastrar = async (url: string, dados: Object, setDados: Function, 
     const resposta = await api.post(url, dados, header);
     setDados(resposta.data);
 };
+
+export const buscarViagens = async (
+  url: string,
+  token: string,
+): Promise<any[]> => {
+  const resposta = await api.get(url, {
+    headers: {
+      Authorization: token,
+    },
+  });
+
+  return resposta.data;
+};

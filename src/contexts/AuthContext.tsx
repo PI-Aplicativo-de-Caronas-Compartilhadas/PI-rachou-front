@@ -23,7 +23,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const usuarioStorage = localStorage.getItem("usuario");
 
         if (usuarioStorage) {
-            return JSON.parse(usuarioStorage);            
+            console.log(usuarioStorage);          
+            return JSON.parse(usuarioStorage);          
         }
 
         return {
@@ -47,6 +48,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await login("/usuarios/logar", usuarioLogin, setUsuario);
 
         setIsLoading(false);
+
     };
 
     function handleLogout() {
@@ -60,7 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             tipo: "",
             token: "" 
         })
-
+        
         localStorage.removeItem("usuario");
 
         Toast("Você foi desconectado com sucesso.", "sucesso");

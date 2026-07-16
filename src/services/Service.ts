@@ -13,9 +13,16 @@ export const cadastrarUsuario = async (
   setDados(resposta.data);
 };
 
+export const cadastrar = async (url: string, dados: Object, setDados: Function, header: Object) => {
+    const resposta = await api.post(url, dados, header);
+    setDados(resposta.data);
+};
+
 export const login = async (url: string, dados: Object, setDados: Function) => {
   const resposta = await api.post(url, dados);
   setDados(resposta.data);
+
+  localStorage.setItem("usuario", JSON.stringify(resposta.data));
 };
 
 export const buscar = async (
@@ -45,12 +52,7 @@ export const atualizar = async (url: string, dados: Object, setDados: Function, 
     setDados(resposta.data);
 };
 
-export const cadastrar = async (url: string, dados: Object, setDados: Function, header: Object) => {
-    const resposta = await api.post(url, dados, header);
-    setDados(resposta.data);
-};
-
 export const deletar = async (url: string, header: Object) => {
-    await api.delete(url, header)
-}
+    await api.delete(url, header);
+};
 

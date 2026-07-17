@@ -1,20 +1,24 @@
-import { useContext, useMemo, useState } from "react";
-import { AuthContext } from "../../contexts/AuthContext";
-import { FaCar, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
+import { useState } from "react";
+import { FaCar, FaCalendarAlt } from "react-icons/fa";
 
 interface SearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export function SearchModal({ isOpen, onClose }: SearchModalProps) {
-  const { usuario } = useContext(AuthContext);
+interface SearchResult {
+  origem: string;
+  destino: string;
+  horario: string;
+  preco: string;
+}
 
+export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const [origem, setOrigem] = useState("");
   const [destino, setDestino] = useState("");
   const [dataIda, setDataIda] = useState("");
   const [passageiros, setPassageiros] = useState("");
-  const [resultado, setResultado] = useState<any | null>(null);
+  const [resultado, setResultado] = useState<SearchResult | null>(null);
 
   // Função para limpar estados ao fechar
   const handleClose = () => {
@@ -27,12 +31,21 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const inputBase =
     "p-4 bg-slate-900 border border-slate-700 rounded-xl w-full text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[oklch(53.13%_0.202_277.03)]";
 
-  // ... (mantenha sua lógica de procurarCarona e cidades aqui) ...
-
   if (!isOpen) return null;
 
-  function procurarCarona(event: React.MouseEvent<HTMLButtonElement>): void {
-    throw new Error("Function not implemented.");
+  function procurarCarona(): void {
+    if (!origem || !destino || !dataIda || !passageiros) {
+      setResultado(null);
+      return;
+    }
+
+    const totalPassageiros = parseInt(passageiros, 10) || 1;
+    setResultado({
+      origem,
+      destino,
+      horario: dataIda,
+      preco: `R$ ${(totalPassageiros * 25).toFixed(2).replace('.', ',')}`,
+    });
   }
 
   return (
@@ -110,14 +123,14 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
               </div>
 
               <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2">
-                <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400" />
+                <span className="absolute -left-1.25 top-1.5 w-2 h-2 rounded-full bg-slate-400" />
                 <div>
                   <p className="text-[10px] text-slate-400 uppercase">
                     Partida
                   </p>
                   <h3 className="font-bold text-lg">{resultado.origem}</h3>
                 </div>
-                <span className="absolute -left-[5px] bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
+                <span className="absolute -left-1.25 bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
                 <div>
                   <p className="text-[10px] text-slate-400 uppercase">
                     Destino

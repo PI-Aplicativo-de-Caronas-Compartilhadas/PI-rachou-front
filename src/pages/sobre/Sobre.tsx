@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 
 function Sobre() {
     return (
-        <div className="min-h-screen bg-[radial-gradient(circle_at_center,_var(--color-ultrasonic-blue-800),_var(--color-ultrasonic-blue-950))] py-16 px-6">
+        <div className="min-h-screen bg-[radial-gradient(circle_at_center,var(--color-ultrasonic-blue-800),var(--color-ultrasonic-blue-950))] py-16 px-6">
 
             <div className="max-w-7xl mx-auto">
 

@@ -227,7 +227,7 @@ function ListaViagens() {
                     
                     {/* TRAJETO */}
                     <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2 w-full">
-                      <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[oklch(76.31%_0.097_283.87)] transition-colors duration-200" />
+                      <span className="absolute -left-1.25 top-1.5 w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[oklch(76.31%_0.097_283.87)] transition-colors duration-200" />
                       <div className="w-full">
                         <p className="text-xs text-slate-400 font-medium">Partida</p>
                         {editandoEste ? (
@@ -242,7 +242,7 @@ function ListaViagens() {
                         )}
                       </div>
 
-                      <span className="absolute -left-[5px] bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
+                      <span className="absolute -left-1.25 bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
                       <div className="w-full">
                         <p className="text-xs text-slate-400 font-medium">Destino</p>
                         {editandoEste ? (

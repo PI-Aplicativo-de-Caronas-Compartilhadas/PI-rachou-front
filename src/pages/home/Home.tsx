@@ -14,7 +14,7 @@ function Home() {
 
   return (
     // O gradiente agora cobre a tela inteira de ponta a ponta
-    <div className="min-h-screen bg-[radial-gradient(circle_at_center,_var(--color-ultrasonic-blue-800),_var(--color-ultrasonic-blue-950))] text-white px-4 py-8 md:px-12 md:py-16 flex justify-center items-start">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_center,var(--color-ultrasonic-blue-800),var(--color-ultrasonic-blue-950))] text-white px-4 py-8 md:px-12 md:py-16 flex justify-center items-start">
       
       {/* Container mestre que alinha perfeitamente as laterais de todas as seções */}
       <div className="max-w-7xl w-full flex flex-col gap-10 md:gap-12 lg:gap-16">
@@ -63,7 +63,7 @@ function Home() {
             <img
               src={passageirosHome}
               alt="Passageiros no carro compartilhando carona"
-              className="w-full h-64 md:h-96 lg:h-[500px] object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
+              className="w-full h-64 md:h-96 lg:h-125 object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
             />
           </div>
         </div>
@@ -140,7 +140,7 @@ function Home() {
             <img
               src={avaliacoesImg}
               alt="Celular mostrando a tela de avaliações do aplicativo"
-              className="w-full h-64 md:h-80 lg:h-[400px] object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
+              className="w-full h-64 md:h-80 lg:h-100 object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
             />
           </div>
 
@@ -188,7 +188,7 @@ function Home() {
             <img
               src={motoristaHome2}
               alt="Motorista sorrindo de óculos escuros encostado no carro"
-              className="w-full h-64 md:h-80 lg:h-[400px] object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
+              className="w-full h-64 md:h-80 lg:h-100 object-cover rounded-2xl shadow-xl border border-ultrasonic-blue-600/20"
             />
           </div>
         </div>

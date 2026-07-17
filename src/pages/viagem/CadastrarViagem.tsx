@@ -73,7 +73,7 @@ export function CadastrarViagem() {
 
   return (
     <>
-      <div className="min-h-screen bg-[radial-gradient(circle_at_center,_var(--color-ultrasonic-blue-800),_var(--color-ultrasonic-blue-950))] text-white px-4 py-8 md:px-12 md:py-16 flex justify-center items-start">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_center,var(--color-ultrasonic-blue-800),var(--color-ultrasonic-blue-950))] text-white px-4 py-8 md:px-12 md:py-16 flex justify-center items-start">
         <div className="max-w-7xl w-full flex flex-col gap-12 lg:gap-16">
           
           <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center w-full">
@@ -209,7 +209,7 @@ export function CadastrarViagem() {
               <img
                 src={motoristaCadastrar}
                 alt="Motorista pronto para iniciar o cadastro do trajeto"
-                className="w-full h-64 md:h-96 lg:h-[550px] object-cover rounded-3xl shadow-2xl border border-ultrasonic-blue-400/50"
+                className="w-full h-64 md:h-96 lg:h-137.5 object-cover rounded-3xl shadow-2xl border border-ultrasonic-blue-400/50"
               />
             </div>
           </div>

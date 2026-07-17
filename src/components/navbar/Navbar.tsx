@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import WeatherWidget from '../weather/WeatherWidget'; // Importando o Widget
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserCircleCheckIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { UserCircleIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
   const { usuario, handleLogout } = useContext(AuthContext);
@@ -78,40 +78,37 @@ export default function Navbar() {
           </div>
 
           {/* AVATAR DE USUÁRIO / ENTRAR (Desktop e Mobile) */}
-<div className="relative flex items-center">
+<div className="relative flex items-center z-10">
   {estaLogado ? (
     <div className="flex items-center gap-3">
       {/* Se o usuário logado tiver foto, mostra a foto. Caso contrário, mostra o ícone do avatar */}
       {usuario.foto ? (
-        <Link to="/perfil">
-        <img
-          src={usuario.foto}
-          alt={`Foto de ${usuario.nome}`}
-          className="w-10 h-10 rounded-full border border-[oklch(23.84%_0.118_272.92)] object-cover shadow-sm"
-          title={usuario.nome}
-        />
+        <Link to="/perfil" className="cursor-pointer block transition-all hover:opacity-80">
+          <img
+            src={usuario.foto}
+            alt={`Foto de ${usuario.nome}`}
+            className="w-10 h-10 rounded-full border border-[oklch(23.84%_0.118_272.92)] object-cover shadow-sm"
+            title={usuario.nome}
+          />
         </Link>
       ) : (
-        
-        <div className="text-[oklch(88.10%_0.048_285.37)]" title={usuario.nome}>
+        <Link to="/perfil" className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 cursor-pointer block active:scale-95" title={usuario.nome}>
           <UserCircleIcon size={32} />
-        </div>
+        </Link>
       )}
       
       <button
         onClick={handleLogout}
-        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)]
-        hover:text-white text-xs lg:text-sm font-semibold px-3 py-2
-        rounded-lg transition-all duration-200 cursor-pointer"
+        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)] hover:text-white text-xs lg:text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-200 cursor-pointer"
       >
         Sair
       </button>
     </div>
   ) : (
-    /* Antes de logar: exibe o ícone de avatar padrão que direciona para a página de login */
+    /* Antes de logar: exibe exatamente o ícone de avatar padrão apontando para o login */
     <Link
       to="/login"
-      className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 active:scale-95"
+      className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 active:scale-95 cursor-pointer block z-10"
       title="Entrar na Conta"
     >
       <UserCircleIcon size={32} />

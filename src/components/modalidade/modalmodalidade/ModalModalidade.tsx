@@ -4,20 +4,24 @@ import React, { type ReactNode } from "react";
 
 interface ModalModalidadeProps {
     atualizarLista?: () => void;
-    componente: ReactNode;
+    componente: React.ReactElement;
     icon: ReactNode;
     idModalidade?: any;
-    fecharModal?: () => void;
 }
 
-export function ModalModalidade({ componente, icon, fecharModal }: ModalModalidadeProps) {
+export function ModalModalidade({ componente, icon }: ModalModalidadeProps) {
+    const renderPopupContent = (close: () => void) =>
+        React.cloneElement(componente as React.ReactElement, {
+            fecharModal: close,
+        });
+
     return (
         <Popup
-        trigger={
-            <button>
-                {icon}
-            </button>
-        }
+            trigger={
+                <button>
+                    {icon}
+                </button>
+            }
             modal
             contentStyle={{
                 width: "90%",
@@ -26,17 +30,11 @@ export function ModalModalidade({ componente, icon, fecharModal }: ModalModalida
                 borderRadius: "1.5rem",
                 padding: "0",
                 background: "transparent",
-                border: "none"
+                border: "none",
             }}
         >
-        {(close) => (
-            <>
-                {React.cloneElement(componente as React.ReactElement<any>, {
-                    fecharModal: close
-                })}
-            </>
-        )}
-    </Popup>
+            {renderPopupContent as unknown as ReactNode}
+        </Popup>
     );
 }
 

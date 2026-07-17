@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import WeatherWidget from '../weather/WeatherWidget'; // Importando o Widget
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserCircleCheckIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { UserCircleIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
   const { usuario, handleLogout } = useContext(AuthContext);
@@ -108,6 +108,7 @@ export default function Navbar() {
       </button>
     </div>
   ) : (
+
     /* Antes de logar: exibe o ícone de avatar padrão que direciona para a página de login */
     <Link
       to="/login"

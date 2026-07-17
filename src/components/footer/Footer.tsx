@@ -24,7 +24,7 @@ export default function Footer() {
     <footer className="w-full bg-[oklch(14.20%_0.051_277.68)] text-[oklch(88.10%_0.048_285.37)] border-t border-[oklch(23.84%_0.118_272.92)]">
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
 
-        {/* Grid Principal Alinhado com gap maior (gap-16) */}
+        {/* Grid Principal */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-16 items-start">
 
           {/* Coluna 1: Sobre o Rachou */}
@@ -41,7 +41,7 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Coluna 2: Navegação Centralizada (md:mx-auto garante o posicionamento ao centro) */}
+          {/* Coluna 2: Navegação Centralizada */}
           <div className="flex flex-col space-y-4 md:mx-auto">
             <h4 className="text-base font-bold uppercase tracking-wider text-white h-12 flex items-center">
               Navegação
@@ -57,7 +57,6 @@ export default function Footer() {
                     Procurar Carona
                   </Link>
                 )}
-
               </li>
               <li>
                 <Link to="/sobre" className="hover:text-white transition-colors duration-200 font-medium">
@@ -73,18 +72,36 @@ export default function Footer() {
           </div>
 
           {/* Coluna 3: Redes / Contato */}
-          <div className="flex flex-col space-y-4 md:ml-auto">
+          <div className="flex flex-col space-y-4 md:ml-auto w-full max-w-xs">
             <h4 className="text-base font-bold uppercase tracking-wider text-white h-12 flex items-center">
               Contato & Suporte
             </h4>
             <p className="text-base text-[oklch(76.31%_0.097_283.87)]">
               Dúvidas ou sugestões? Fale conosco!
             </p>
+            
+            {/* Ícones de Redes Sociais */}
             <div className="flex space-x-6 text-2xl pt-1">
               <a href="#" className="hover:text-white transition-colors duration-200"><EnvelopeSimpleIcon size={28} /></a>
               <a href="#" className="hover:text-white transition-colors duration-200"><InstagramLogoIcon size={28} /></a>
               <a href="#" className="hover:text-white transition-colors duration-200"><WhatsappLogoIcon size={28} /></a>
               <a href="#" className="hover:text-white transition-colors duration-200"><GithubLogoIcon size={28} /></a>
+            </div>
+
+            {/* Linktree em Destaque */}
+            <div className="pt-2">
+              <a 
+                href="https://linktr.ee/apprachou" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2.5 w-full py-2.5 px-4 bg-[oklch(23.84%_0.118_272.92)] hover:bg-[oklch(53.13%_0.202_277.03)] text-white font-semibold text-sm rounded-xl border border-slate-700/50 hover:border-transparent transition-all duration-300 shadow-md active:scale-[0.98]"
+              >
+                {/* SVG Ícone do Linktree */}
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                  <path d="M13.511 5.854l4.249-4.248 1.415 1.414-4.249 4.249h5.074v2H13.51v3.911l4.984 2.877-1 1.732-4.984-2.877v6.088h-2v-6.088l-4.985 2.877-1-1.732 4.985-2.877V9.269H4v-2h5.065L4.825 3.02l1.414-1.414 4.237 4.234V0h3.035v5.854zM12 24a1.484 1.484 0 110-2.967A1.484 1.484 0 0112 24z"/>
+                </svg>
+                Nossa Central de Links
+              </a>
             </div>
           </div>
 

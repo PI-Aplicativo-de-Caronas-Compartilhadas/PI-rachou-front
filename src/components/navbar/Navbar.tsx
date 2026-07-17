@@ -83,13 +83,16 @@ export default function Navbar() {
     <div className="flex items-center gap-3">
       {/* Se o usuário logado tiver foto, mostra a foto. Caso contrário, mostra o ícone do avatar */}
       {usuario.foto ? (
+        <Link to="/perfil">
         <img
           src={usuario.foto}
           alt={`Foto de ${usuario.nome}`}
           className="w-10 h-10 rounded-full border border-[oklch(23.84%_0.118_272.92)] object-cover shadow-sm"
           title={usuario.nome}
         />
+        </Link>
       ) : (
+        
         <div className="text-[oklch(88.10%_0.048_285.37)]" title={usuario.nome}>
           <UserCircleIcon size={32} />
         </div>
@@ -97,7 +100,9 @@ export default function Navbar() {
       
       <button
         onClick={handleLogout}
-        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)] hover:text-white text-xs lg:text-sm font-semibold px-3 py-2 rounded-lg transition-all duration-200"
+        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)]
+        hover:text-white text-xs lg:text-sm font-semibold px-3 py-2
+        rounded-lg transition-all duration-200 cursor-pointer"
       >
         Sair
       </button>

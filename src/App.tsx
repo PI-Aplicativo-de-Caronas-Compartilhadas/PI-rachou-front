@@ -10,6 +10,7 @@ import CadastroUsuario from './pages/cadastrousuario/CadastroUsuario'; // Import
 import { AuthProvider } from './contexts/AuthContext';
 import { Modalidades } from './pages/modalidades/Modalidades';
 import { ToastContainer } from 'react-toastify';
+import Perfil from './pages/perfil/Perfil';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
             <Route path="/viagens" element={<ListaViagens />} />
             <Route path="/cadastrarviagem" element={<CadastrarViagem />} />            
             <Route path="/modalidades" element={<Modalidades />} />
+            <Route path="/perfil" element={<Perfil />} />
 
           </Routes>
         </div>

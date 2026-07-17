@@ -10,14 +10,28 @@ function ListaViagens() {
   const [precoEditado, setPrecoEditado] = useState("");
   const [vagasEditadas, setVagasEditadas] = useState("");
   
-  // Novos estados para controlar a edição de Origem e Destino
   const [origemEditada, setOrigemEditada] = useState("");
   const [destinoEditado, setDestinoEditado] = useState("");
 
   const [caronaSelecionada, setCaronaSelecionada] = useState<any | null>(null);
   const [idParaDeletar, setIdParaDeletar] = useState<string | null>(null);
 
+  // NOVO: Estado para controlar se o usuário está logado
+  const [estaLogado, setEstaLogado] = useState(false);
+
   const carregarCaronas = () => {
+    // Validação ampliada para capturar o login independentemente da chave utilizada
+    const token = localStorage.getItem("token");
+    const usuario = localStorage.getItem("usuario");
+    const user = localStorage.getItem("user");
+    const rachouUsuario = localStorage.getItem("rachou_usuario");
+
+    if (token || usuario || user || rachouUsuario) {
+      setEstaLogado(true);
+    } else {
+      setEstaLogado(false);
+    }
+
     const salvasRaw = localStorage.getItem("rachou_caronas");
     const caronasSalvas = salvasRaw ? JSON.parse(salvasRaw) : [];
 
@@ -65,6 +79,7 @@ function ListaViagens() {
   }, []);
 
   const efetivarDeletar = () => {
+    if (!estaLogado) return;
     if (!idParaDeletar) return;
 
     const salvasRaw = localStorage.getItem("rachou_caronas");
@@ -79,12 +94,13 @@ function ListaViagens() {
     }
   };
 
-const iniciarEdicao = (carona: any) => {
+  const iniciarEdicao = (carona: any) => {
+    if (!estaLogado) return;
     setIdEditando(carona.id);
     setPrecoEditado(carona.precoOriginal);
     setVagasEditadas(carona.vagasOriginal.toString());
     setOrigemEditada(carona.origem);
-    setDestinoEditado(carona.destino); // Corrigido para "o" no final
+    setDestinoEditado(carona.destino); 
   };
 
   const cancelarEdicao = () => {
@@ -92,10 +108,11 @@ const iniciarEdicao = (carona: any) => {
     setPrecoEditado("");
     setVagasEditadas("");
     setOrigemEditada("");
-    setDestinoEditado(""); // Corrigido para "o" no final
+    setDestinoEditado(""); 
   };
 
   const salvarEdicao = (id: string) => {
+    if (!estaLogado) return;
     const salvasRaw = localStorage.getItem("rachou_caronas");
     if (salvasRaw) {
       const caronasSalvas = JSON.parse(salvasRaw);
@@ -106,8 +123,8 @@ const iniciarEdicao = (carona: any) => {
             ...carona,
             preco: precoEditado,
             vagas: vagasEditadas,
-            origem: origemEditada.trim(),  // Atualiza a origem editada
-            destino: destinoEditado.trim()  // Atualiza o destino editado
+            origem: origemEditada.trim(),  
+            destino: destinoEditado.trim()  
           };
         }
         return carona;
@@ -208,7 +225,7 @@ const iniciarEdicao = (carona: any) => {
                       </span>
                     </div>
                     
-                    {/* TRAJETO (DINÂMICO PARA EDIÇÃO) */}
+                    {/* TRAJETO */}
                     <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2 w-full">
                       <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[oklch(76.31%_0.097_283.87)] transition-colors duration-200" />
                       <div className="w-full">
@@ -276,8 +293,8 @@ const iniciarEdicao = (carona: any) => {
                     </div>
                   </div>
 
-                  {/* Ações Administrador */}
-                  {!editandoEste && (
+                  {/* Renderiza os botões de ação estritamente se o usuário estiver logado */}
+                  {estaLogado && !editandoEste && (
                     <div className="flex gap-2 shrink-0">
                       <button
                         onClick={() => iniciarEdicao(carona)}

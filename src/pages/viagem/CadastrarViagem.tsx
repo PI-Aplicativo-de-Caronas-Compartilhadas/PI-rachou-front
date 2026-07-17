@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-// 1. Atualizado o import para a nova imagem correta
 import motoristaCadastrar from "../../assets/motorista-cadastrar.jpg";
 import { 
   FaCarSide, 
@@ -15,33 +14,66 @@ import {
   FaCalendarDays
 } from "react-icons/fa6";
 import Toast from "../../utils/Toast";
+import { AuthContext } from "../../contexts/AuthContext";
+import { cadastrar, buscar } from "../../services/Service";
+import type { Viagem } from "../../models/Viagem";
+import type { Modalidade } from "../../models/Modalidade";
 
 export function CadastrarViagem() {
   const navigate = useNavigate();
   
+  const { usuario } = useContext(AuthContext);
+  const token = usuario.token;
+
+  useEffect(() => {
+    if (!token) {
+      Toast("Você precisa estar logado.", "info");
+      navigate("/");
+    }
+  }, [token, navigate]);
+
   // Estados do Formulário
   const [origem, setOrigem] = useState("");
   const [destino, setDestino] = useState("");
   const [preco, setPreco] = useState("");
-  const [vagas, setVagas] = useState("2");
   
   const [dataPartida, setDataPartida] = useState("");
   const [horarioPartida, setHorarioPartida] = useState("");
   
-  const [modalidadeSelecionada, setModalidadeSelecionada] = useState("");
+  const [modalidades, setModalidades] = useState<Modalidade[]>([]);
+  const [modalidadeId, setModalidadeId] = useState<number>(0);
 
-  // Regra de Negócio: Se selecionar Moto, força o estado de vagas para 1
-  useEffect(() => {
-    if (modalidadeSelecionada === "Moto") {
-      setVagas("1");
+  // Buscar modalidades do banco de dados
+  async function buscarModalidades() {
+    try {
+      await buscar("/modalidades", setModalidades, {
+        headers: {
+          Authorization: token,
+        },
+      });
+    } catch (error: any) {
+      console.error("Erro ao carregar modalidades:", error);
+      Toast("Erro ao carregar as modalidades do sistema.", "info");
     }
-  }, [modalidadeSelecionada]);
+  }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (token) {
+      buscarModalidades();
+    }
+  }, [token]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!modalidadeSelecionada) {
-      Toast("Por favor, selecione uma modalidade (Carro ou Moto)!", "info");
+    if (!usuario.id) {
+      Toast("Usuário inválido. Faça login novamente.", "info");
+      navigate("/");
+      return;
+    }
+
+    if (!modalidadeId) {
+      Toast("Por favor, selecione uma modalidade!", "info");
       return;
     }
 
@@ -50,25 +82,49 @@ export function CadastrarViagem() {
       return;
     }
 
-    const novaCarona = {
-      id: Date.now().toString(),
+    const tokenFormatado = token.startsWith("Bearer") ? token : `Bearer ${token}`;
+
+    const novaViagem: Viagem = {
+      id: 0,
       origem: origem.trim(),
       destino: destino.trim(),
       preco: parseFloat(preco),
-      vagas: parseInt(vagas),
-      data: `${dataPartida}T${horarioPartida}`, 
-      modalidade: modalidadeSelecionada,
+      status: "Disponível",
+      previsaoSaida: `${dataPartida}T${horarioPartida}:00`, 
+      previsaoChegada: `${dataPartida}T${horarioPartida}:00`,
+      usuario: {
+        id: usuario.id,
+      } as any,
+      modalidade: {
+        id: modalidadeId,
+      } as any,
     };
 
-    const caronasSalvas = localStorage.getItem("rachou_caronas");
-    const listaCaronas = caronasSalvas ? JSON.parse(caronasSalvas) : [];
-    listaCaronas.push(novaCarona);
-    localStorage.setItem("rachou_caronas", JSON.stringify(listaCaronas));
+    try {
+      console.log("Enviando para a API:", novaViagem);
 
-    console.log("Carona cadastrada com sucesso:", novaCarona);
-    
-    Toast("Sua oferta de carona foi publicada com sucesso!", "sucesso");
-    navigate("/");
+      await cadastrar(
+        "/viagens", 
+        novaViagem, 
+        () => {}, 
+        {
+          headers: {
+            Authorization: tokenFormatado,
+          },
+        }
+      );
+
+      Toast("Sua oferta de carona foi publicada com sucesso!", "sucesso");
+      navigate("/");
+    } catch (error: any) {
+      console.error("Detalhe completo da falha:", error);
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        Toast("Sessão expirada. Faça login novamente.", "info");
+        navigate("/");
+      } else {
+        Toast("Não foi possível conectar com o servidor para cadastrar a carona.", "info");
+      }
+    }
   };
 
   return (
@@ -156,41 +212,22 @@ export function CadastrarViagem() {
                     </div>
                   </div>
 
-                  <div className="space-y-1.5">
-                    <label className="text-sm font-semibold text-white">Vagas Disponíveis</label>
-                    <select
-                      value={vagas}
-                      onChange={(e) => setVagas(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-ultrasonic-blue-400/30 bg-slate-950/60 text-white focus:outline-none focus:border-ultrasonic-blue-400 focus:ring-1 focus:ring-ultrasonic-blue-400 transition-all duration-200"
-                    >
-                      {modalidadeSelecionada === "Moto" ? (
-                        <option value="1" className="bg-slate-900 text-white">1 vaga (Máximo para Moto)</option>
-                      ) : (
-                        <>
-                          <option value="1" className="bg-slate-900 text-white">1 vaga</option>
-                          <option value="2" className="bg-slate-900 text-white">2 vagas</option>
-                          <option value="3" className="bg-slate-900 text-white">3 vagas</option>
-                          <option value="4" className="bg-slate-900 text-white">4 vagas</option>
-                        </>
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 md:col-span-2">
                     <label className="text-sm font-semibold text-white flex items-center gap-2">
                       <FaTags className="text-ultrasonic-blue-400" /> Modalidade
                     </label>
                     <select
                       required
-                      value={modalidadeSelecionada}
-                      onChange={(e) => setModalidadeSelecionada(e.target.value)}
-                      className={`w-full px-4 py-3 rounded-xl border border-ultrasonic-blue-400/30 bg-slate-950/60 focus:outline-none focus:border-ultrasonic-blue-400 focus:ring-1 focus:ring-ultrasonic-blue-400 transition-all duration-200 ${
-                        modalidadeSelecionada === "" ? "text-slate-400" : "text-white"
-                      }`}
+                      value={modalidadeId}
+                      onChange={(e) => setModalidadeId(Number(e.target.value))}
+                      className="w-full px-4 py-3 rounded-xl border border-ultrasonic-blue-400/30 bg-slate-950/60 text-white focus:outline-none focus:border-ultrasonic-blue-400 focus:ring-1 focus:ring-ultrasonic-blue-400 transition-all duration-200"
                     >
-                      <option value="" disabled className="bg-slate-900 text-slate-400">Modalidade</option>
-                      <option value="Carro" className="bg-slate-900 text-white">Carro</option>
-                      <option value="Moto" className="bg-slate-900 text-white">Moto</option>
+                      <option value={0} disabled className="bg-slate-900 text-slate-400">Selecione uma modalidade</option>
+                      {modalidades.map((mod) => (
+                        <option key={mod.id} value={mod.id} className="bg-slate-900 text-white">
+                          {mod.nome}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>

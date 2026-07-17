@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import WeatherWidget from '../weather/WeatherWidget'; // Importando o Widget
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { UserCircleCheckIcon, UserCircleIcon } from "@phosphor-icons/react";
+import { UserCircleIcon, GearIcon, SignOutIcon, UserIcon } from "@phosphor-icons/react";
 
 export default function Navbar() {
   const { usuario, handleLogout } = useContext(AuthContext);
   const [estaLogado, setEstaLogado] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para controlar o menu cascata no mobile
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para o menu mobile
+  const [isProfileOpen, setIsProfileOpen] = useState(false); // Estado para o dropdown de perfil (desktop)
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const token = usuario.token;
 
@@ -19,8 +21,22 @@ export default function Navbar() {
     }
   }, [token]);
 
+  // Fecha o dropdown de perfil se clicar fora dele
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   // Função para fechar o menu ao clicar em um link
-  const closeMenu = () => setIsMenuOpen(false);
+  const closeMenu = () => {
+    setIsMenuOpen(false);
+    setIsProfileOpen(false);
+  };
 
   return (
     <nav className="w-full bg-[oklch(14.20%_0.051_277.68)] text-white border-b border-[oklch(23.84%_0.118_272.92)] sticky top-0 z-50 shadow-md">
@@ -77,47 +93,80 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* AVATAR DE USUÁRIO / ENTRAR (Desktop e Mobile) */}
-<div className="relative flex items-center">
-  {estaLogado ? (
-    <div className="flex items-center gap-3">
-      {/* Se o usuário logado tiver foto, mostra a foto. Caso contrário, mostra o ícone do avatar */}
-      {usuario.foto ? (
-        <Link to="/perfil">
-        <img
-          src={usuario.foto}
-          alt={`Foto de ${usuario.nome}`}
-          className="w-10 h-10 rounded-full border border-[oklch(23.84%_0.118_272.92)] object-cover shadow-sm"
-          title={usuario.nome}
-        />
-        </Link>
-      ) : (
-        
-        <div className="text-[oklch(88.10%_0.048_285.37)]" title={usuario.nome}>
-          <UserCircleIcon size={32} />
-        </div>
-      )}
-      
-      <button
-        onClick={handleLogout}
-        className="hidden sm:block hover:bg-red-600/50 text-[oklch(88.10%_0.048_285.37)]
-        hover:text-white text-xs lg:text-sm font-semibold px-3 py-2
-        rounded-lg transition-all duration-200 cursor-pointer"
-      >
-        Sair
-      </button>
-    </div>
-  ) : (
-    /* Antes de logar: exibe o ícone de avatar padrão que direciona para a página de login */
-    <Link
-      to="/login"
-      className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 active:scale-95"
-      title="Entrar na Conta"
-    >
-      <UserCircleIcon size={32} />
-    </Link>
-  )}
-</div>
+          {/* AVATAR DE USUÁRIO / ENTRAR (Com Dropdown elegante integrado) */}
+          <div className="relative flex items-center" ref={dropdownRef}>
+            {estaLogado ? (
+              <div className="relative flex items-center gap-2">
+                
+                {/* Gatilho do Click para abrir o Dropdown de Perfil */}
+                <button
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center focus:outline-none transition-transform duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                  title={usuario.nome}
+                >
+                  {usuario.foto ? (
+                    <img
+                      src={usuario.foto}
+                      alt={`Foto de ${usuario.nome}`}
+                      className="w-10 h-10 rounded-full border-2 border-[oklch(23.84%_0.118_272.92)] hover:border-[oklch(53.13%_0.202_277.03)] object-cover shadow-sm transition-colors"
+                    />
+                  ) : (
+                    <div className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-colors">
+                      <UserCircleIcon size={34} />
+                    </div>
+                  )}
+                </button>
+
+                {/* --- MENU DROPDOWN FLUTUANTE (Desktop) --- */}
+                {isProfileOpen && (
+                  <div className="hidden md:block absolute right-0 top-full mt-3 w-52 bg-[oklch(14.20%_0.051_277.68)] border border-[oklch(23.84%_0.118_272.92)] rounded-xl shadow-xl overflow-hidden py-1.5 z-50">
+                    <div className="px-4 py-2 border-b border-[oklch(23.84%_0.118_272.92)]/60 mb-1">
+                      <p className="text-xs text-[oklch(76.31%_0.097_283.87)] font-medium">Olá,</p>
+                      <p className="text-sm font-semibold truncate text-white">{usuario.nome}</p>
+                    </div>
+
+                    <Link
+                      to="/perfil"
+                      onClick={closeMenu}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[oklch(88.10%_0.048_285.37)] hover:text-white hover:bg-[oklch(23.84%_0.118_272.92)] transition-colors font-medium"
+                    >
+                      <UserIcon size={18} />
+                      Meu Perfil
+                    </Link>
+
+                    <Link
+                      to="/editarperfil"
+                      onClick={closeMenu}
+                      className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-[oklch(88.10%_0.048_285.37)] hover:text-white hover:bg-[oklch(23.84%_0.118_272.92)] transition-colors font-medium"
+                    >
+                      <GearIcon size={18} />
+                      Editar Perfil
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        handleLogout();
+                        closeMenu();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-950/20 transition-colors font-semibold text-left border-t border-[oklch(23.84%_0.118_272.92)]/40 mt-1"
+                    >
+                      <SignOutIcon size={18} />
+                      Sair
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Antes de logar */
+              <Link
+                to="/login"
+                className="text-[oklch(88.10%_0.048_285.37)] hover:text-white transition-all duration-200 active:scale-95"
+                title="Entrar na Conta"
+              >
+                <UserCircleIcon size={32} />
+              </Link>
+            )}
+          </div>
 
           {/* BOTÃO DO MENU HAMBÚRGUER (Visível apenas em Mobile) */}
           <button
@@ -126,7 +175,6 @@ export default function Navbar() {
             className="md:hidden flex flex-col justify-center items-center w-10 h-10 rounded-lg hover:bg-[oklch(20.20%_0.051_277.68)] transition-all gap-1.5 focus:outline-none"
             aria-label="Abrir Menu"
           >
-            {/* Linhas do hambúrguer que viram um "X" quando aberto */}
             <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-2' : ''}`} />
             <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? 'opacity-0' : ''}`} />
             <span className={`h-0.5 w-6 bg-white rounded-lg transition-all duration-300 ${isMenuOpen ? '-rotate-45 -translate-y-2' : ''}`} />
@@ -135,12 +183,12 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* --- MENU CASCATA RESPONSIVO --- */}
+      {/* --- MENU CASCATA RESPONSIVO (MOBILE) --- */}
       {isMenuOpen && (
         <div className="md:hidden w-full bg-[oklch(14.20%_0.051_277.68)] border-t border-[oklch(23.84%_0.118_272.92)] shadow-xl animate-slide-down">
           <div className="flex flex-col px-6 py-4 space-y-4">
             
-            {/* Opção 1: Ver Caronas */}
+            {/* Opções visíveis sempre no Mobile */}
             <Link
               to="/viagens"
               onClick={closeMenu}
@@ -149,7 +197,6 @@ export default function Navbar() {
               Ver Caronas
             </Link>
 
-            {/* Opção 2: Oferecer Caronas */}
             <Link
               to={estaLogado ? "/cadastrarviagem" : "/login"}
               onClick={closeMenu}
@@ -158,7 +205,6 @@ export default function Navbar() {
               Oferecer Carona
             </Link>
 
-            {/* Opção 3: Sobre */}
             <Link
               to="/sobre"
               onClick={closeMenu}
@@ -177,6 +223,25 @@ export default function Navbar() {
                 >
                   Modalidades
                 </Link>
+
+                {/* MEU PERFIL (MOBILE) */}
+                <Link
+                  to="/perfil"
+                  onClick={closeMenu}
+                  className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+                >
+                  Meu Perfil
+                </Link>
+
+                {/* EDITAR PERFIL (MOBILE) */}
+                <Link
+                  to="/editarperfil"
+                  onClick={closeMenu}
+                  className="text-[oklch(88.10%_0.048_285.37)] hover:text-white font-semibold py-2 transition-all border-b border-[oklch(23.84%_0.118_272.92)]/50"
+                >
+                  Editar Perfil
+                </Link>
+
                 <button
                   onClick={() => {
                     handleLogout();

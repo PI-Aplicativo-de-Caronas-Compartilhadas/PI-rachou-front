@@ -34,7 +34,7 @@ export function CardResultado({
   previsaoChegada,
 }: CardResultadoProps) {
   return (
-    <div className="mt-5 rounded-2xl border border-ultrasonic-blue-100 bg-ultrasonic-blue-50 shadow-sm overflow-hidden">
+    <div className="mt-5 rounded-2xl border border-ultrasonic-blue-100 bg-ultrasonic-blue-50 shadow-sm overflow-hidden text-slate-900">
       <div className="bg-ultrasonic-blue-50 px-6 py-4 border-b">
         <h3 className="text-lg font-bold text-ultrasonic-blue-600">
           Carona disponível

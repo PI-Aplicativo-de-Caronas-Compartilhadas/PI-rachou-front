@@ -1,9 +1,6 @@
-import { useState } from "react";
-import { cidades } from "../../data/cidades";
-import { CardResultado } from "./CardCarona";
-import { buscarViagens } from "../../services/Service";
-import { useContext } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
+import { FaCar, FaMapMarkerAlt, FaCalendarAlt } from "react-icons/fa";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -12,198 +9,132 @@ interface SearchModalProps {
 
 export function SearchModal({ isOpen, onClose }: SearchModalProps) {
   const { usuario } = useContext(AuthContext);
+
   const [origem, setOrigem] = useState("");
-  const [mostrarSugestoes, setMostrarSugestoes] = useState(false);
-
   const [destino, setDestino] = useState("");
-  const [mostrarSugestoesDestino, setMostrarSugestoesDestino] = useState(false);
-
+  const [dataIda, setDataIda] = useState("");
   const [passageiros, setPassageiros] = useState("");
-
-  //const [mostrarResultado, setMostrarResultado] = useState(false);
-
-  //const [viagens, setViagens] = useState<any[]>([]);
   const [resultado, setResultado] = useState<any | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setOrigem(e.target.value);
-    setMostrarSugestoes(true);
+  // Função para limpar estados ao fechar
+  const handleClose = () => {
+    setResultado(null);
+    setOrigem("");
+    setDestino("");
+    onClose();
   };
 
-  const handleChangeDestino = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setDestino(e.target.value);
-    setMostrarSugestoesDestino(true);
-  };
+  const inputBase =
+    "p-4 bg-slate-900 border border-slate-700 rounded-xl w-full text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-[oklch(53.13%_0.202_277.03)]";
 
-  const cidadesFiltradas = cidades.filter((cidade) =>
-    cidade.toLowerCase().includes(origem.toLowerCase()),
-  );
-
-  const cidadesFiltradasDestino = cidades.filter((cidade) =>
-    cidade.toLowerCase().includes(destino.toLowerCase()),
-  );
-
-  const normalizarTexto = (texto: string) =>
-    texto
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .trim()
-      .toLowerCase();
-
-  const procurarCarona = async () => {
-    console.log("Botão clicado!");
-
-    const token =
-      "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJqb2FvLnNpbHZhQGV4ZW1wbG8uY29tIiwiaWF0IjoxNzg0MjA3NTQ0LCJleHAiOjE3ODQyMTExNDR9.R86XBLRt6AOAhYkskytjBFXf4_HAbDW9tAnrQQD5lu9ma49B9_4zrP6NOcpz1vci";
-
-    const viagens = await buscarViagens("/viagens", token);
-    console.log(token);
-    console.log(viagens);
-    console.log("Origem digitada:", origem);
-    console.log("Destino digitado:", destino);
-    viagens.forEach((viagem) => {
-      console.log(
-        viagem.origem,
-        viagem.destino,
-        viagem.origem.toLowerCase() === origem.toLowerCase(),
-        viagem.destino.toLowerCase() === destino.toLowerCase(),
-      );
-    });
-
-    const viagemEncontrada = viagens.find(
-      (viagem) =>
-        normalizarTexto(viagem.origem) === normalizarTexto(origem) &&
-        normalizarTexto(viagem.destino) === normalizarTexto(destino),
-    );
-    console.log("Viagem encontrada:", viagemEncontrada);
-    setResultado(viagemEncontrada ?? null);
-  };
+  // ... (mantenha sua lógica de procurarCarona e cidades aqui) ...
 
   if (!isOpen) return null;
 
+  function procurarCarona(event: React.MouseEvent<HTMLButtonElement>): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
-    <div className="fixed inset-0 bg-ultrasonic-blue-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-ultrasonic-blue-50 rounded-2xl w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-300">
-        <div className="p-6 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-ultrasonic-blue-600">
+    <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-[oklch(20.20%_0.051_277.68)] border border-slate-700 rounded-2xl w-full max-w-lg shadow-2xl overflow-y-auto max-h-[90vh]">
+        {/* HEADER */}
+        <div className="p-6 flex justify-between items-center border-b border-slate-700">
+          <h2 className="text-xl font-bold text-[oklch(76.31%_0.097_283.87)]">
             Buscar Carona
           </h2>
           <button
-            onClick={onClose}
-            className="text-ultrasonic-blue-300 text-4xl font-bold hover:text-ultrasonic-blue-600"
+            onClick={handleClose}
+            className="text-slate-400 hover:text-white text-2xl"
           >
             &times;
           </button>
         </div>
 
-        <div className="p-8 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-5">
-            <input
-              type="text"
-              value={origem}
-              onChange={handleChange}
-              placeholder="Origem"
-              className="p-4 border border-ultrasonic-blue-600 rounded-xl w-full"
-            />
+        <div className="p-6 space-y-4">
+          <input
+            type="text"
+            value={origem}
+            placeholder="Origem"
+            className={inputBase}
+            onChange={(e) => setOrigem(e.target.value)}
+          />
+          <input
+            type="text"
+            value={destino}
+            placeholder="Destino"
+            className={inputBase}
+            onChange={(e) => setDestino(e.target.value)}
+          />
 
-            {mostrarSugestoes && origem && (
-              <div className="border border-gray-200 rounded-xl bg-white shadow-md max-h-48 overflow-y-auto">
-                {cidadesFiltradas.map((cidade) => (
-                  <div
-                    key={cidade}
-                    className="p-3 hover:bg-gray-100 cursor-pointer"
-                    onClick={() => {
-                      setOrigem(cidade);
-                      setMostrarSugestoes(false);
-                    }}
-                  >
-                    {cidade}
-                  </div>
-                ))}
-              </div>
-            )}
-
+          <div className="grid grid-cols-2 gap-4">
             <input
-              type="text"
-              placeholder="Destino"
-              value={destino}
-              onChange={handleChangeDestino}
-              className="p-4 border  border-ultrasonic-blue-600 rounded-xl w-full"
-            />
-          </div>
-          {mostrarSugestoesDestino && destino && (
-            <div className="border border-gray-200 rounded-xl bg-white shadow-md max-h-48 overflow-y-auto">
-              {cidadesFiltradasDestino.map((cidade) => (
-                <div
-                  key={cidade}
-                  className="p-3 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    setDestino(cidade);
-                    setMostrarSugestoesDestino(false);
-                  }}
-                >
-                  {cidade}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <input
-              type="text"
-              placeholder="Ida"
-              onFocus={(e) => (e.currentTarget.type = "date")}
-              onBlur={(e) => {
-                if (!e.currentTarget.value) {
-                  e.currentTarget.type = "text";
-                }
-              }}
-              className="w-full p-4 border  border-ultrasonic-blue-600  rounded-xl"
-            />
-            <input
-              type="text"
-              placeholder="Volta"
-              onFocus={(e) => (e.currentTarget.type = "date")}
-              onBlur={(e) => {
-                if (!e.currentTarget.value) {
-                  e.currentTarget.type = "text";
-                }
-              }}
-              className="w-full p-4 border  border-ultrasonic-blue-600  rounded-xl"
+              type="date"
+              value={dataIda}
+              className={inputBase}
+              onChange={(e) => setDataIda(e.target.value)}
             />
             <select
               value={passageiros}
+              className={inputBase}
               onChange={(e) => setPassageiros(e.target.value)}
-              className={`p-4 border border-ultrasonic-blue-600 rounded-xl ${
-                passageiros ? "text-gray-900" : "text-gray-400"
-              }`}
             >
               <option value="" disabled>
                 Passageiros
               </option>
-
-              <option value="1">1 adulto</option>
-              <option value="2">2 adultos</option>
-              <option value="3">3 adultos</option>
-              <option value="4">4 adultos</option>
+              {[1, 2, 3, 4].map((n) => (
+                <option key={n} value={n}>
+                  {n} adulto(s)
+                </option>
+              ))}
             </select>
           </div>
+
           <button
             onClick={procurarCarona}
-            className="mt-2 w-full bg-ultrasonic-blue-500 text-white py-4 rounded-xl font-bold hover:bg-ultrasonic-blue-600 transition"
+            className="w-full bg-[oklch(53.13%_0.202_277.03)] text-white py-4 rounded-xl font-bold hover:bg-[oklch(64.35%_0.151_281.28)] transition"
           >
-            Procurar
+            Buscar Carona
           </button>
 
+          {/* CARD DE RESULTADO ESTILIZADO IGUAL A LISTAVIAGENS */}
           {resultado && (
-            <CardResultado
-              origem={resultado.origem}
-              destino={resultado.destino}
-              previsaoSaida={resultado.previsaoSaida}
-              previsaoChegada={resultado.previsaoChegada}
-              distancia={0}
-              tempo=""
-            />
+            <div className="mt-6 p-6 bg-slate-900 border border-slate-700 rounded-2xl flex flex-col gap-4">
+              <div className="flex justify-between items-center">
+                <span className="text-[10px] font-bold uppercase bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full border border-blue-800">
+                  1 vaga
+                </span>
+                <span className="text-sm text-slate-300 flex items-center gap-1">
+                  <FaCar /> Carro
+                </span>
+              </div>
+
+              <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2">
+                <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400" />
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase">
+                    Partida
+                  </p>
+                  <h3 className="font-bold text-lg">{resultado.origem}</h3>
+                </div>
+                <span className="absolute -left-[5px] bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
+                <div>
+                  <p className="text-[10px] text-slate-400 uppercase">
+                    Destino
+                  </p>
+                  <h3 className="font-bold text-lg">{resultado.destino}</h3>
+                </div>
+              </div>
+
+              <div className="border-t border-slate-700 pt-4 flex justify-between items-center">
+                <p className="text-sm text-slate-400 flex items-center gap-2">
+                  <FaCalendarAlt /> {resultado.horario}
+                </p>
+                <span className="text-2xl font-black text-[oklch(76.31%_0.097_283.87)]">
+                  {resultado.preco}
+                </span>
+              </div>
+            </div>
           )}
         </div>
       </div>

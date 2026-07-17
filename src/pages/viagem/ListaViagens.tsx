@@ -1,60 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { FaTrash, FaPen, FaCheck, FaXmark, FaCar, FaMotorcycle } from "react-icons/fa6";
-
-// Caronas fictícias ajustadas para conter modalidade padrão
-const caronasMockPadrao = [
-  {
-    id: "mock-1",
-    origem: "São Paulo",
-    destino: "Campinas",
-    preco: "R$ 35,00",
-    motorista: "Rodrigo Silva",
-    modalidade: "Carro", // Adicionado modalidade
-    dataObj: (() => {
-      const d = new Date();
-      d.setHours(18, 30, 0, 0);
-      return d;
-    })(),
-    horario: "Hoje às 18:30",
-    vagas: "3 vagas",
-    isMock: true,
-  },
-  {
-    id: "mock-2",
-    origem: "Rio de Janeiro",
-    destino: "Niterói",
-    preco: "R$ 15,00",
-    motorista: "Beatriz Costa",
-    modalidade: "Moto", // Adicionado modalidade
-    dataObj: (() => {
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      d.setHours(8, 0, 0, 0);
-      return d;
-    })(),
-    horario: "Amanhã às 08:00",
-    vagas: "1 vaga", // Geralmente moto é 1 vaga
-    isMock: true,
-  },
-  {
-    id: "mock-3",
-    origem: "Belo Horizonte",
-    destino: "Ouro Preto",
-    preco: "R$ 40,00",
-    motorista: "Gabriel Souza",
-    modalidade: "Carro", // Adicionado modalidade
-    dataObj: (() => {
-      const d = new Date();
-      d.setDate(d.getDate() + 2);
-      d.setHours(14, 0, 0, 0);
-      return d;
-    })(),
-    horario: "18 de Julho às 14:00",
-    vagas: "4 vagas",
-    isMock: true,
-  }
-];
+import { FaTrash, FaPen, FaCheck, FaXmark, FaCar, FaMotorcycle, FaPaperPlane, FaTriangleExclamation } from "react-icons/fa6";
+import Toast from "../../utils/Toast";
 
 function ListaViagens() {
   const [caronas, setCaronas] = useState<any[]>([]);
@@ -62,6 +9,13 @@ function ListaViagens() {
   const [idEditando, setIdEditando] = useState<string | null>(null);
   const [precoEditado, setPrecoEditado] = useState("");
   const [vagasEditadas, setVagasEditadas] = useState("");
+  
+  // Novos estados para controlar a edição de Origem e Destino
+  const [origemEditada, setOrigemEditada] = useState("");
+  const [destinoEditado, setDestinoEditado] = useState("");
+
+  const [caronaSelecionada, setCaronaSelecionada] = useState<any | null>(null);
+  const [idParaDeletar, setIdParaDeletar] = useState<string | null>(null);
 
   const carregarCaronas = () => {
     const salvasRaw = localStorage.getItem("rachou_caronas");
@@ -71,7 +25,6 @@ function ListaViagens() {
       let dataFormatada = carona.data;
       let dataObj = new Date(carona.data);
 
-      // Se a data do localStorage for inválida, cria uma data padrão atual
       if (isNaN(dataObj.getTime())) {
         dataObj = new Date();
       } else {
@@ -94,8 +47,8 @@ function ListaViagens() {
         preco: `R$ ${parseFloat(carona.preco).toFixed(2).replace(".", ",")}`,
         precoOriginal: carona.preco, 
         motorista: "Você (Motorista)",
-        modalidade: carona.modalidade || "Carro", // Recupera a modalidade cadastrada (padrão é "Carro" se não houver)
-        dataObj: dataObj, // Guardado para fazer a ordenação
+        modalidade: carona.modalidade || "Carro",
+        dataObj: dataObj,
         horario: dataFormatada,
         vagas: `${carona.vagas} vagas`,
         vagasOriginal: carona.vagas, 
@@ -103,42 +56,43 @@ function ListaViagens() {
       };
     });
 
-    // 1. Mesclar todas as caronas (Reais + Mocks)
-    const todasCaronas = [...caronasSalvasFormatadas, ...caronasMockPadrao];
-
-    // 2. Ordenar de forma crescente (a viagem com a data mais próxima/antiga vem primeiro)
-    todasCaronas.sort((a, b) => a.dataObj.getTime() - b.dataObj.getTime());
-
-    setCaronas(todasCaronas);
+    caronasSalvasFormatadas.sort((a: any, b: any) => a.dataObj.getTime() - b.dataObj.getTime());
+    setCaronas(caronasSalvasFormatadas);
   };
 
   useEffect(() => {
     carregarCaronas();
   }, []);
 
-  const handleDeletar = (id: string) => {
-    const confirmar = window.confirm("Deseja realmente remover esta oferta de carona?");
-    if (!confirmar) return;
+  const efetivarDeletar = () => {
+    if (!idParaDeletar) return;
 
     const salvasRaw = localStorage.getItem("rachou_caronas");
     if (salvasRaw) {
       const caronasSalvas = JSON.parse(salvasRaw);
-      const novaLista = caronasSalvas.filter((carona: any) => carona.id !== id);
+      const novaLista = caronasSalvas.filter((carona: any) => carona.id !== idParaDeletar);
       localStorage.setItem("rachou_caronas", JSON.stringify(novaLista));
+      
+      Toast("Viagem cancelada com sucesso!", "sucesso");
+      setIdParaDeletar(null); 
       carregarCaronas();
     }
   };
 
-  const iniciarEdicao = (carona: any) => {
+const iniciarEdicao = (carona: any) => {
     setIdEditando(carona.id);
     setPrecoEditado(carona.precoOriginal);
     setVagasEditadas(carona.vagasOriginal.toString());
+    setOrigemEditada(carona.origem);
+    setDestinoEditado(carona.destino); // Corrigido para "o" no final
   };
 
   const cancelarEdicao = () => {
     setIdEditando(null);
     setPrecoEditado("");
     setVagasEditadas("");
+    setOrigemEditada("");
+    setDestinoEditado(""); // Corrigido para "o" no final
   };
 
   const salvarEdicao = (id: string) => {
@@ -151,16 +105,24 @@ function ListaViagens() {
           return {
             ...carona,
             preco: precoEditado,
-            vagas: vagasEditadas
+            vagas: vagasEditadas,
+            origem: origemEditada.trim(),  // Atualiza a origem editada
+            destino: destinoEditado.trim()  // Atualiza o destino editado
           };
         }
         return carona;
       });
 
       localStorage.setItem("rachou_caronas", JSON.stringify(novaLista));
+      Toast("Alterações salvas com sucesso!", "sucesso");
       cancelarEdicao();
       carregarCaronas();
     }
+  };
+
+  const enviarSolicitacaoAprovacao = () => {
+    Toast(`Solicitação enviada para o motorista ${caronaSelecionada?.motorista}! Aguarde a aprovação.`, "sucesso");
+    setCaronaSelecionada(null);
   };
 
   return (
@@ -194,15 +156,25 @@ function ListaViagens() {
             return (
               <div 
                 key={carona.id}
-                className="bg-[oklch(20.20%_0.051_277.68)] border border-[oklch(23.84%_0.118_272.92)] rounded-2xl p-6 shadow-md hover:shadow-xl hover:border-[oklch(53.13%_0.202_277.03)]/50 transition-all duration-300 flex flex-col justify-between gap-5 group relative"
+                className="bg-[oklch(20.20%_0.051_277.68)] border border-[oklch(23.84%_0.118_272.92)] rounded-2xl p-6 shadow-md hover:shadow-xl hover:border-[oklch(53.13%_0.202_277.03)]/50 transition-all duration-300 flex flex-col justify-between gap-5 group relative overflow-hidden"
               >
+                {/* OVERLAY: "Rachar essa viagem" */}
+                {!editandoEste && (
+                  <div 
+                    onClick={() => setCaronaSelecionada(carona)}
+                    className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 cursor-pointer z-10"
+                  >
+                    <span className="bg-[oklch(53.13%_0.202_277.03)] text-white font-bold px-6 py-3 rounded-xl shadow-2xl tracking-wide transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                      Rachar essa viagem →
+                    </span>
+                  </div>
+                )}
+
                 {/* TOPO DO CARD */}
                 <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
+                  <div className="flex-1 w-full">
                     
-                    {/* Linha com Vagas e a Modalidade */}
                     <div className="flex items-center gap-2 mb-4 flex-wrap">
-                      {/* Badge de Vagas / Modo Edição das Vagas */}
                       {editandoEste ? (
                         <div className="flex flex-col gap-1">
                           <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Editar Vagas</label>
@@ -223,7 +195,6 @@ function ListaViagens() {
                         </span>
                       )}
 
-                      {/* NOVO BADGE: Modalidade (Carro ou Moto) */}
                       <span className="text-[10px] font-bold uppercase tracking-wider bg-slate-800/80 text-slate-300 px-3 py-1.5 rounded-full border border-slate-700 inline-flex items-center gap-1.5">
                         {ehMoto ? (
                           <>
@@ -237,30 +208,41 @@ function ListaViagens() {
                       </span>
                     </div>
                     
-                    {/* TRAJETO ESTILO BLABLACAR COM LINHA VERTICAL */}
-                    <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2">
+                    {/* TRAJETO (DINÂMICO PARA EDIÇÃO) */}
+                    <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2 w-full">
                       <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400 group-hover:bg-[oklch(76.31%_0.097_283.87)] transition-colors duration-200" />
-                      
-                      <div>
+                      <div className="w-full">
                         <p className="text-xs text-slate-400 font-medium">Partida</p>
-                        <h3 className="text-base sm:text-lg font-bold text-slate-100">
-                          {carona.origem}
-                        </h3>
+                        {editandoEste ? (
+                          <input
+                            type="text"
+                            value={origemEditada}
+                            onChange={(e) => setOrigemEditada(e.target.value)}
+                            className="mt-1 w-full max-w-xs bg-slate-900 border border-slate-700 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-violet-500"
+                          />
+                        ) : (
+                          <h3 className="text-base sm:text-lg font-bold text-slate-100">{carona.origem}</h3>
+                        )}
                       </div>
 
                       <span className="absolute -left-[5px] bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
-                      
-                      <div>
+                      <div className="w-full">
                         <p className="text-xs text-slate-400 font-medium">Destino</p>
-                        <h3 className="text-base sm:text-lg font-bold text-slate-100">
-                          {carona.destino}
-                        </h3>
+                        {editandoEste ? (
+                          <input
+                            type="text"
+                            value={destinoEditado}
+                            onChange={(e) => setDestinoEditado(e.target.value)}
+                            className="mt-1 w-full max-w-xs bg-slate-900 border border-slate-700 rounded-lg px-3 py-1 text-sm text-white focus:outline-none focus:border-violet-500"
+                          />
+                        ) : (
+                          <h3 className="text-base sm:text-lg font-bold text-slate-100">{carona.destino}</h3>
+                        )}
                       </div>
                     </div>
-
                   </div>
 
-                  {/* Preço / Modo Edição do Preço */}
+                  {/* Preço */}
                   <div className="mt-1 shrink-0">
                     {editandoEste ? (
                       <div className="flex flex-col gap-1 items-end">
@@ -281,27 +263,21 @@ function ListaViagens() {
                   </div>
                 </div>
 
-                {/* DETALHES (BASE DO CARD) + BOTÕES ALINHADOS À DIREITA */}
-                <div className="text-xs sm:text-sm text-slate-400 flex justify-between items-end border-t border-[oklch(23.84%_0.118_272.92)] pt-4">
-                  
-                  {/* Informações do Motorista e Saída */}
+                {/* DETALHES + BOTÕES */}
+                <div className="text-xs sm:text-sm text-slate-400 flex justify-between items-end border-t border-[oklch(23.84%_0.118_272.92)] pt-4 z-20 relative">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                       <span>👤</span>
-                      <p>
-                        Motorista: <span className="text-slate-200 font-semibold">{carona.motorista}</span>
-                      </p>
+                      <p>Motorista: <span className="text-slate-200 font-semibold">{carona.motorista}</span></p>
                     </div>
                     <div className="flex items-center gap-2">
                       <span>📅</span>
-                      <p>
-                        Saída prevista: <span className="text-slate-200 font-medium">{carona.horario}</span>
-                      </p>
+                      <p>Saída prevista: <span className="text-slate-200 font-medium">{carona.horario}</span></p>
                     </div>
                   </div>
 
-                  {/* BOTÕES DE EDITAR/EXCLUIR (No canto inferior direito) */}
-                  {!carona.isMock && !editandoEste && (
+                  {/* Ações Administrador */}
+                  {!editandoEste && (
                     <div className="flex gap-2 shrink-0">
                       <button
                         onClick={() => iniciarEdicao(carona)}
@@ -311,7 +287,7 @@ function ListaViagens() {
                         <FaPen className="text-xs" />
                       </button>
                       <button
-                        onClick={() => handleDeletar(carona.id)}
+                        onClick={() => setIdParaDeletar(carona.id)} 
                         title="Excluir Carona"
                         className="p-2 rounded-lg bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-300 transition-all duration-200"
                       >
@@ -320,7 +296,6 @@ function ListaViagens() {
                     </div>
                   )}
 
-                  {/* BOTÕES DE CONFIRMAR/CANCELAR EDICAO */}
                   {editandoEste && (
                     <div className="flex gap-2 shrink-0">
                       <button
@@ -337,7 +312,6 @@ function ListaViagens() {
                       </button>
                     </div>
                   )}
-
                 </div>
 
               </div>
@@ -346,6 +320,87 @@ function ListaViagens() {
         </div>
 
       </div>
+
+      {/* POP-UP: SOLICITAÇÃO AO MOTORISTA */}
+      {caronaSelecionada && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-[oklch(20.20%_0.051_277.68)] border border-[oklch(23.84%_0.118_272.92)] w-full max-w-md p-6 rounded-2xl shadow-2xl relative space-y-6 text-slate-100">
+            <button 
+              onClick={() => setCaronaSelecionada(null)}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-white bg-slate-800/50 rounded-lg transition-colors"
+            >
+              <FaXmark className="text-sm" />
+            </button>
+
+            <div className="space-y-1">
+              <h2 className="text-xl font-extrabold text-[oklch(76.31%_0.097_283.87)] flex items-center gap-2">
+                🚗 Detalhes para Rachar
+              </h2>
+              <p className="text-xs text-slate-400">Confirme as informações antes de enviar a solicitação.</p>
+            </div>
+
+            <div className="bg-slate-900/60 border border-slate-800 p-4 rounded-xl space-y-3 text-sm">
+              <p><span className="text-slate-400 font-medium">Motorista:</span> <span className="font-semibold text-slate-200">{caronaSelecionada.motorista}</span></p>
+              <p><span className="text-slate-400 font-medium">Trajeto:</span> <span className="font-semibold text-slate-200">{caronaSelecionada.origem} → {caronaSelecionada.destino}</span></p>
+              <p><span className="text-slate-400 font-medium">Preço por Vaga:</span> <span className="font-bold text-[oklch(76.31%_0.097_283.87)]">{caronaSelecionada.preco}</span></p>
+              <p><span className="text-slate-400 font-medium">Horário:</span> <span className="text-slate-300">{caronaSelecionada.horario}</span></p>
+              <p><span className="text-slate-400 font-medium">Modalidade:</span> <span className="text-slate-300">{caronaSelecionada.modalidade}</span></p>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setCaronaSelecionada(null)}
+                className="flex-1 py-3 border border-slate-700 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl transition-colors text-sm"
+              >
+                Voltar
+              </button>
+              <button
+                onClick={enviarSolicitacaoAprovacao}
+                className="flex-1 py-3 bg-[oklch(53.13%_0.202_277.03)] hover:bg-[oklch(64.35%_0.151_281.28)] text-white font-bold rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm"
+              >
+                <FaPaperPlane className="text-xs" /> Enviar Pedido
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* POP-UP ESTILIZADO: CONFIRMAÇÃO DE CANCELAMENTO / EXCLUSÃO */}
+      {idParaDeletar && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-[oklch(20.20%_0.051_277.68)] border border-rose-950/30 w-full max-w-sm p-6 rounded-2xl shadow-2xl relative space-y-5 text-slate-100">
+            <div className="flex items-center gap-3 text-rose-500">
+              <div className="p-2.5 bg-rose-500/10 rounded-xl border border-rose-500/20">
+                <FaTriangleExclamation className="text-lg" />
+              </div>
+              <div>
+                <h2 className="text-base font-bold text-white">Cancelar Viagem</h2>
+                <p className="text-[11px] text-slate-400">Essa ação removerá sua oferta do sistema.</p>
+              </div>
+            </div>
+
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Tem certeza que gostaria de cancelar a viagem?
+            </p>
+
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={() => setIdParaDeletar(null)} 
+                className="flex-1 py-2 border border-slate-700 hover:bg-slate-800 text-slate-300 font-semibold rounded-xl transition-colors text-xs sm:text-sm"
+              >
+                Não, voltar
+              </button>
+              <button
+                onClick={efetivarDeletar} 
+                className="flex-1 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl transition-all text-xs sm:text-sm flex items-center justify-center gap-1.5"
+              >
+                Sim, cancelar
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
     </>
   );
 }

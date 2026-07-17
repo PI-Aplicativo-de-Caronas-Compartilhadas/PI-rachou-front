@@ -13,9 +13,14 @@ export const cadastrarUsuario = async (
   setDados(resposta.data);
 };
 
-export const cadastrar = async (url: string, dados: Object, setDados: Function, header: Object) => {
-    const resposta = await api.post(url, dados, header);
-    setDados(resposta.data);
+export const cadastrar = async (
+  url: string,
+  dados: Object,
+  setDados: Function,
+  header: Object,
+) => {
+  const resposta = await api.post(url, dados, header);
+  setDados(resposta.data);
 };
 
 export const login = async (url: string, dados: Object, setDados: Function) => {
@@ -47,12 +52,22 @@ export const buscarViagens = async (
   return resposta.data;
 };
 
-export const atualizar = async (url: string, dados: Object, setDados: Function, header: Object) => {
-    const resposta = await api.put(url, dados, header);
-    setDados(resposta.data);
+export const atualizar = async (
+  url: string,
+  dados: Object,
+  setDados: Function,
+  header: Object,
+) => {
+  const resposta = await api.put(url, dados, header);
+  setDados(resposta.data);
 };
 
 export const deletar = async (url: string, header: Object) => {
-    await api.delete(url, header);
+  await api.delete(url, header);
 };
 
+export const buscarViagensMock = (): any[] => {
+  const caronasSalvas = localStorage.getItem("rachou_caronas");
+
+  return caronasSalvas ? JSON.parse(caronasSalvas) : [];
+};

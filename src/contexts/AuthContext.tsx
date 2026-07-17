@@ -22,8 +22,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const usuarioStorage = localStorage.getItem("usuario");
 
-        if (usuarioStorage) {
-            console.log(usuarioStorage);          
+        if (usuarioStorage) {         
             return JSON.parse(usuarioStorage);          
         }
 

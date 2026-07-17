@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
-import { FaCar, FaMapMarkerAlt } from "react-icons/fa";
 import { buscar } from "../../services/Service";
+import CardResultado from "./CardCarona";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -47,14 +47,7 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
           );
 
           if (viagemEncontrada) {
-            setResultado({
-              ...viagemEncontrada,
-              preco: viagemEncontrada.preco
-                ? `R$ ${parseFloat(viagemEncontrada.preco).toFixed(2).replace(".", ",")}`
-                : "R$ 0,00",
-              // Corrigido para ler previsaoSaida que é o campo gerado no cadastro
-              horario: viagemEncontrada.previsaoSaida || "Data não informada",
-            });
+            setResultado(viagemEncontrada);
           } else {
             setResultado(null);
             alert("Nenhuma carona encontrada para este trajeto.");
@@ -113,42 +106,16 @@ export function SearchModal({ isOpen, onClose }: SearchModalProps) {
             Buscar
           </button>
 
+          {/* Chamada do CardResultado */}
           {resultado && (
-            <div className="mt-6 p-6 bg-slate-900 border border-slate-700 rounded-2xl flex flex-col gap-4">
-              <div className="flex justify-between items-center">
-                <span className="text-[10px] font-bold uppercase bg-blue-900/30 text-blue-400 px-3 py-1 rounded-full border border-blue-800">
-                  {resultado.modalidade?.nome || "Carro"}
-                </span>
-                <span className="text-sm text-slate-300 flex items-center gap-1">
-                  <FaCar /> {resultado.modalidade?.nome || "Carro"}
-                </span>
-              </div>
-
-              <div className="flex flex-col relative pl-6 border-l-2 border-dashed border-slate-600 gap-4 mt-2">
-                <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-slate-400" />
-                <div>
-                  <p className="text-[10px] text-slate-400 uppercase">Origem</p>
-                  <h3 className="font-bold text-lg text-slate-100">
-                    {resultado.origem}
-                  </h3>
-                </div>
-                <span className="absolute -left-[5px] bottom-1.5 w-2 h-2 rounded-full bg-[oklch(76.31%_0.097_283.87)]" />
-                <div>
-                  <p className="text-[10px] text-slate-400 uppercase">
-                    Destino
-                  </p>
-                  <h3 className="font-bold text-lg text-slate-100">
-                    {resultado.destino}
-                  </h3>
-                </div>
-              </div>
-
-              <div className="border-t border-slate-700 pt-4 flex justify-between items-center">
-                <span className="text-2xl font-black text-[oklch(76.31%_0.097_283.87)]">
-                  {resultado.preco}
-                </span>
-              </div>
-            </div>
+            <CardResultado
+              origem={resultado.origem}
+              destino={resultado.destino}
+              modalidade={resultado.modalidade?.nome}
+              preco={resultado.preco}
+              previsaoSaida={resultado.previsaoSaida}
+              previsaoChegada={resultado.previsaoChegada}
+            />
           )}
         </div>
       </div>
